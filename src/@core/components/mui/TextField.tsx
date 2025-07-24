@@ -158,6 +158,7 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   },
   '& .MuiFormHelperText-root': {
     lineHeight: 1.154,
+    textAlign: 'right',
     margin: theme.spacing(1, 0, 0),
     fontSize: theme.typography.body2.fontSize,
     '&.Mui-error': {
@@ -250,7 +251,13 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   }
 }))
 
-const CustomTextField = forwardRef((props: TextFieldProps, ref) => {
+interface CustomTextFieldProps extends Omit<TextFieldProps, 'slotProps'> {
+  slotProps?: TextFieldProps['slotProps'] & {
+    inputLabel?: Partial<InputLabelProps>
+  }
+}
+
+const CustomTextField = forwardRef<HTMLInputElement, CustomTextFieldProps>((props, ref) => {
   const { size = 'small', slotProps, ...rest } = props
 
   return (
@@ -261,7 +268,7 @@ const CustomTextField = forwardRef((props: TextFieldProps, ref) => {
       variant='filled'
       slotProps={{
         ...slotProps,
-        inputLabel: { ...slotProps?.inputLabel, shrink: true } as InputLabelProps
+        inputLabel: { ...slotProps?.inputLabel, shrink: true }
       }}
     />
   )

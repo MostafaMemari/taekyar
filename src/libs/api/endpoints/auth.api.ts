@@ -8,7 +8,6 @@ import { api } from '../index'
 import { API_ROUTES } from '../routes'
 import type { ApiResponse } from '@/types/api-response.type'
 import type {
-  signinData,
   signupData,
   signupCoachData,
   signupStudentData,
@@ -20,8 +19,9 @@ import type {
   AuthTokens
 } from '@/types/auth.type'
 import { COOKIE_NAMES } from '@/libs/constants'
+import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
 
-export const signIn = async (data: signinData): Promise<ApiResponse<AuthTokens>> => {
+export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens>> => {
   const res = await api(API_ROUTES.AUTH.SIGN_IN, {
     method: 'POST',
     body: data

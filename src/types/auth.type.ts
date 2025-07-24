@@ -10,11 +10,6 @@ export interface signupData {
   confirmPassword: string
 }
 
-export interface signinData {
-  identifier: string
-  password: string
-}
-
 export interface signupStudentData {
   nationalCode: string
 }

@@ -30,10 +30,16 @@ export const useAuth = () => {
     onError: error => {
       const statusCode = extractStatusCode(error)
 
-      if (statusCode !== null) {
+      console.log(statusCode)
+
+      if (statusCode === 401) {
+        showToast({ type: 'error', message: 'نام کاربری یا کلمه عبور اشتباه است' })
+      } else if (statusCode === 500) {
+        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
+      } else if (statusCode !== null) {
         showToast({ type: 'error', message: 'ورود ناموفق بود' })
       } else {
-        showToast({ type: 'success', message: 'خطاری سیستمی' })
+        showToast({ type: 'error', message: 'خطای سیستمی' })
       }
     }
   })
