@@ -33,7 +33,7 @@ const RootLayout = async (props: ChildrenType) => {
   // Vars
 
   const systemMode = await getSystemMode()
-  const direction = 'ltr'
+  const direction = 'rtl'
 
   return (
     <html id='__next' lang='en' dir={direction} suppressHydrationWarning>
