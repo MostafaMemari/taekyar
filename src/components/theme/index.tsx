@@ -30,6 +30,9 @@ import { useSettings } from '@core/hooks/useSettings'
 // Core Theme Imports
 import defaultCoreTheme from '@core/theme'
 
+// font
+import { iranyekan } from '@/assets/fonts/iranyekan'
+
 type Props = ChildrenType & {
   direction: Direction
   systemMode: SystemMode
@@ -68,6 +71,9 @@ const CustomThemeProvider = (props: Props) => {
               light: lighten(settings.primaryColor as string, 0.2),
               dark: darken(settings.primaryColor as string, 0.1)
             }
+          },
+          typography: {
+            fontFamily: iranyekan.style.fontFamily
           }
         },
         dark: {
@@ -77,6 +83,9 @@ const CustomThemeProvider = (props: Props) => {
               light: lighten(settings.primaryColor as string, 0.2),
               dark: darken(settings.primaryColor as string, 0.1)
             }
+          },
+          typography: {
+            fontFamily: iranyekan.style.fontFamily
           }
         }
       },
