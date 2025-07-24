@@ -13,6 +13,10 @@ import {
 } from '@/libs/api/endpoints/auth.api'
 
 import { QueryKeys } from '@/libs/constants'
+import { extractStatusCode } from '@/utils/error'
+import { showToast } from '@/utils/showToast'
+
+// import { showToast } from '@/utils/showToast'
 
 export const useAuth = () => {
   const queryClient = useQueryClient()
@@ -20,7 +24,17 @@ export const useAuth = () => {
   const signInMutation = useMutation({
     mutationFn: signIn,
     onSuccess: () => {
+      showToast({ type: 'success', message: 'ورود با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
+    onError: error => {
+      const statusCode = extractStatusCode(error)
+
+      if (statusCode !== null) {
+        showToast({ type: 'error', message: 'ورود ناموفق بود' })
+      } else {
+        showToast({ type: 'success', message: 'خطاری سیستمی' })
+      }
     }
   })
 
