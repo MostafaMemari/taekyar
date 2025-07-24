@@ -1,3 +1,8 @@
+export interface AuthTokens {
+  accessToken: string
+  refreshToken: string
+}
+
 export interface signupData {
   username: string
   mobile: string
