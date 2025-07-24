@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles'
 import type { VerticalMenuContextProps } from '@menu/components/vertical-menu/Menu'
 
 // Component Imports
-import HorizontalNav, { Menu, MenuItem } from '@menu/horizontal-menu'
+import HorizontalNav, { Menu } from '@menu/horizontal-menu'
 import VerticalNavContent from './VerticalNavContent'
 
 // Hook Imports
@@ -21,6 +21,10 @@ import menuRootStyles from '@core/styles/horizontal/menuRootStyles'
 import verticalNavigationCustomStyles from '@core/styles/vertical/navigationCustomStyles'
 import verticalMenuItemStyles from '@core/styles/vertical/menuItemStyles'
 import verticalMenuSectionStyles from '@core/styles/vertical/menuSectionStyles'
+import { GenerateHorizontalMenu } from '@/components/GenerateMenu'
+
+// Menu Data Imports
+import menuData from '@/data/navigation/horizontalMenuData'
 
 type RenderExpandIconProps = {
   level?: number
@@ -60,7 +64,7 @@ const HorizontalMenu = () => {
         backgroundColor: 'var(--mui-palette-background-paper)'
       }}
     >
-      <Menu
+      {/* <Menu
         rootStyles={menuRootStyles(theme)}
         renderExpandIcon={({ level }) => <RenderExpandIcon level={level} />}
         menuItemStyles={menuItemStyles(theme, 'tabler-circle')}
@@ -84,8 +88,8 @@ const HorizontalMenu = () => {
         <MenuItem href='/about' icon={<i className='tabler-info-circle' />}>
           About
         </MenuItem>
-      </Menu>
-      {/* <Menu
+      </Menu> */}
+      <Menu
         rootStyles={menuRootStyles(theme)}
         renderExpandIcon={({ level }) => <RenderExpandIcon level={level} />}
         menuItemStyles={menuItemStyles(theme, 'tabler-circle')}
@@ -103,8 +107,8 @@ const HorizontalMenu = () => {
           menuSectionStyles: verticalMenuSectionStyles(verticalNavOptions, theme)
         }}
       >
-        <GenerateHorizontalMenu menuData={menuData(dictionary)} />
-      </Menu> */}
+        <GenerateHorizontalMenu menuData={menuData()} />
+      </Menu>
     </HorizontalNav>
   )
 }

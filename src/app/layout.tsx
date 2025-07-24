@@ -22,9 +22,9 @@ import '@assets/iconify-icons/generated-icons.css'
 import QueryProvider from './providers'
 
 export const metadata = {
-  title: 'Vuexy - MUI Next.js Admin Dashboard Template',
+  title: 'تک‌یار | یار همراه تکواندوکاران',
   description:
-    'Vuexy - MUI Next.js Admin Dashboard Template - is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.'
+    'تک‌یار، پلتفرم هوشمند و حرفه‌ای برای مدیریت، آموزش و پیشرفت در مسیر تکواندو. همراهی مطمئن برای مربیان، باشگاه‌ها و ورزشکاران در هر گام از مسیر قهرمانی.'
 }
 
 const RootLayout = async (props: ChildrenType) => {
@@ -53,7 +53,6 @@ const RootLayout = async (props: ChildrenType) => {
         />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
         <QueryProvider>{children}</QueryProvider>
-        {children}
       </body>
     </html>
   )
