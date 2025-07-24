@@ -1,6 +1,9 @@
 // MUI Imports
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 
+import { ToastContainer } from 'react-toastify'
+import NextTopLoader from 'nextjs-toploader'
+
 // Third-party Imports
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
@@ -15,6 +18,8 @@ import '@/app/globals.css'
 
 // Generated Icon CSS Imports
 import '@assets/iconify-icons/generated-icons.css'
+
+import QueryProvider from './providers'
 
 export const metadata = {
   title: 'Vuexy - MUI Next.js Admin Dashboard Template',
@@ -33,7 +38,21 @@ const RootLayout = async (props: ChildrenType) => {
   return (
     <html id='__next' lang='en' dir={direction} suppressHydrationWarning>
       <body className='flex is-full min-bs-full flex-auto flex-col'>
+        <NextTopLoader color='var(--primary-color)' showSpinner={false} />
+        <ToastContainer
+          position='top-left'
+          theme={systemMode}
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={true}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
+        <QueryProvider>{children}</QueryProvider>
         {children}
       </body>
     </html>
