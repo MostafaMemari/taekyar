@@ -178,7 +178,7 @@ const RegisterForm = () => {
         }
       />
       <Button fullWidth variant='contained' type='submit' disabled={signUpStatus === 'pending'}>
-        ثبت‌نام
+        {signUpStatus === 'pending' ? 'در حال ثبت‌نام...' : 'ثبت‌نام'}
       </Button>
       <div className='flex justify-center items-center flex-wrap gap-2'>
         <Typography>قبلاً حساب کاربری دارید؟</Typography>

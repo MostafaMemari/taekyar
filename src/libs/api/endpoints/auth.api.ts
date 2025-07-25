@@ -9,7 +9,6 @@ import type {
   signupData,
   signupCoachData,
   signupStudentData,
-  signoutData,
   refreshTokenData,
   forgetPasswordData,
   resetPasswordData,
@@ -18,7 +17,7 @@ import type {
 } from '@/types/auth.type'
 import { COOKIE_NAMES } from '@/libs/constants'
 import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
-import { setCookie } from '@/utils/cookie'
+import { deleteCookie, getCookie, setCookie } from '@/utils/cookie'
 
 export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens>> => {
   const { rememberMe, ...cleanData } = data
@@ -91,11 +90,20 @@ export const signInCoach = async (data: signupCoachData): Promise<ApiResponse<Au
   })
 }
 
-export const signOut = async (data: signoutData): Promise<ApiResponse<null>> => {
-  return api(API_ROUTES.AUTH.SIGN_OUT, {
+export const signOut = async (): Promise<ApiResponse<null>> => {
+  const refreshToken = await getCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
+  const res = await api(API_ROUTES.AUTH.SIGN_OUT, {
     method: 'POST',
-    body: data
+    body: { refreshToken }
   })
+
+  if (res?.status === 200) {
+    await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
+    await deleteCookie(COOKIE_NAMES.REFRESH_TOKEN)
+  }
+
+  return res
 }
 
 export const refreshToken = async (data: refreshTokenData): Promise<ApiResponse<AuthTokens>> => {

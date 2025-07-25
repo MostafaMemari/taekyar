@@ -23,6 +23,7 @@ import Button from '@mui/material/Button'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
+import { useAuth } from '@/hooks/useAuth'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -44,6 +45,7 @@ const UserDropdown = () => {
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
+  const { signOut, signOutStatus } = useAuth()
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -62,8 +64,11 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
-    // Redirect to login page
-    router.push('/auth/login')
+    signOut(undefined, {
+      onSuccess: () => {
+        router.push('/auth/login')
+      }
+    })
   }
 
   return (
@@ -133,11 +138,12 @@ const UserDropdown = () => {
                       variant='contained'
                       color='error'
                       size='small'
-                      endIcon={<i className='tabler-logout' />}
+                      startIcon={<i className='tabler-logout' />}
+                      disabled={signOutStatus === 'pending'}
                       onClick={handleUserLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
-                      خروج
+                      {signOutStatus === 'pending' ? 'در حال خروج...' : 'خروج'}
                     </Button>
                   </div>
                 </MenuList>

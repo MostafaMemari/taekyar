@@ -18,10 +18,6 @@ export interface signupCoachData {
   nationalCode: string
 }
 
-export interface signoutData {
-  refreshToken: string
-}
-
 export interface refreshTokenData {
   refreshToken: string
 }

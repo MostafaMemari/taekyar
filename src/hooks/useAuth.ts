@@ -80,8 +80,22 @@ export const useAuth = () => {
   const signOutMutation = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
+      showToast({ type: 'success', message: 'خروج با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
       queryClient.clear()
+    },
+    onError: error => {
+      const statusCode = extractStatusCode(error)
+
+      if (statusCode === 400) {
+        showToast({ type: 'error', message: 'خروج ناموفق بود' })
+      } else if (statusCode === 500) {
+        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
+      } else if (statusCode !== null) {
+        showToast({ type: 'error', message: 'ورود ناموفق بود' })
+      } else {
+        showToast({ type: 'error', message: 'خطای سیستمی' })
+      }
     }
   })
 
