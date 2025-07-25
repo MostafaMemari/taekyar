@@ -24,7 +24,7 @@ export const api = ofetch.create({
   },
 
   async onResponseError({ response }) {
-    let data = null
+    let data = response._data
 
     try {
       data = await response.json()

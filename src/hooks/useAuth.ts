@@ -45,7 +45,21 @@ export const useAuth = () => {
   const signUpMutation = useMutation({
     mutationFn: signUp,
     onSuccess: () => {
+      showToast({ type: 'success', message: 'ثبت نام با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
+    onError: error => {
+      const statusCode = extractStatusCode(error)
+
+      if (statusCode === 409) {
+        showToast({ type: 'error', message: 'نام کاربری یا رمز عبور تکراری است' })
+      } else if (statusCode === 500) {
+        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
+      } else if (statusCode !== null) {
+        showToast({ type: 'error', message: 'ورود ناموفق بود' })
+      } else {
+        showToast({ type: 'error', message: 'خطای سیستمی' })
+      }
     }
   })
 
