@@ -18,8 +18,10 @@ import type {
 import { COOKIE_NAMES } from '@/libs/constants'
 import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
 import { deleteCookie, getCookie, setCookie } from '@/utils/cookie'
+import { getUserProfile } from './user.api'
+import type { User } from '@/types/user.types'
 
-export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens>> => {
+export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
   const { rememberMe, ...cleanData } = data
 
   const res = await api(API_ROUTES.AUTH.SIGN_IN, {
@@ -50,10 +52,12 @@ export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthToken
     }
   }
 
-  return res
+  const user = await getUserProfile()
+
+  return { ...res, data: { ...res.data, user: user.data } }
 }
 
-export const signUp = async (data: signupData): Promise<ApiResponse<AuthTokens>> => {
+export const signUp = async (data: signupData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
   const res = await api(API_ROUTES.AUTH.SIGN_UP, {
     method: 'POST',
     body: data
@@ -73,10 +77,12 @@ export const signUp = async (data: signupData): Promise<ApiResponse<AuthTokens>>
     })
   }
 
-  return res
+  const user = await getUserProfile()
+
+  return { ...res, data: { ...res.data, user: user.data } }
 }
 
-export const signInStudent = async (data: signupStudentData): Promise<ApiResponse<AuthTokens>> => {
+export const signInStudent = async (data: signupStudentData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
   return api(API_ROUTES.AUTH.SIGN_IN_STUDENT, {
     method: 'POST',
     body: data

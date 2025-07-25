@@ -1,4 +1,4 @@
-export interface ApiSuccessResponse<T> {
+export interface ApiResponse<T> {
   data: T
   error: false
   message: string
@@ -10,5 +10,3 @@ export interface ApiErrorResponse {
   message: string | string[]
   status: number
 }
-
-export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse

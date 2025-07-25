@@ -2,7 +2,7 @@
 import type { ApiResponse } from '@/types/api-response.type'
 import { api } from '../index'
 import { API_ROUTES } from '../routes'
-import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData } from '@/types/user.types'
+import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData, User } from '@/types/user.types'
 
 export const getAllUsers = (query: GetUsersQueryParams): Promise<ApiResponse<any[]>> => {
   return api(API_ROUTES.USER.BASE, {
@@ -18,7 +18,7 @@ export const searchUsers = (query: SearchUserQuery): Promise<ApiResponse<any[]>>
   })
 }
 
-export const getUserProfile = (): Promise<ApiResponse<any>> => {
+export const getUserProfile = (): Promise<ApiResponse<User>> => {
   return api(API_ROUTES.USER.PROFILE, {
     method: 'GET'
   })

@@ -13,53 +13,39 @@ import {
 } from '@/libs/api/endpoints/auth.api'
 
 import { QueryKeys } from '@/libs/constants'
-import { extractStatusCode } from '@/utils/error'
 import { showToast } from '@/utils/showToast'
-
-// import { showToast } from '@/utils/showToast'
+import { useAuthStore } from '@/store'
+import { handleError } from '@/utils/errorHandler'
 
 export const useAuth = () => {
   const queryClient = useQueryClient()
+  const { loginSuccess, logout } = useAuthStore()
 
   const signInMutation = useMutation({
     mutationFn: signIn,
-    onSuccess: () => {
+    onSuccess: response => {
+      loginSuccess(response.data.user)
       showToast({ type: 'success', message: 'ورود با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const statusCode = extractStatusCode(error)
+      const message = handleError(error, 'signIn')
 
-      if (statusCode === 401) {
-        showToast({ type: 'error', message: 'نام کاربری یا کلمه عبور اشتباه است' })
-      } else if (statusCode === 500) {
-        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
-      } else if (statusCode !== null) {
-        showToast({ type: 'error', message: 'ورود ناموفق بود' })
-      } else {
-        showToast({ type: 'error', message: 'خطای سیستمی' })
-      }
+      showToast({ type: 'error', message })
     }
   })
 
   const signUpMutation = useMutation({
     mutationFn: signUp,
-    onSuccess: () => {
+    onSuccess: response => {
+      loginSuccess(response.data.user)
       showToast({ type: 'success', message: 'ثبت نام با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const statusCode = extractStatusCode(error)
+      const message = handleError(error, 'signUp')
 
-      if (statusCode === 409) {
-        showToast({ type: 'error', message: 'نام کاربری یا شماره موبایل تکراری است' })
-      } else if (statusCode === 500) {
-        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
-      } else if (statusCode !== null) {
-        showToast({ type: 'error', message: 'ورود ناموفق بود' })
-      } else {
-        showToast({ type: 'error', message: 'خطای سیستمی' })
-      }
+      showToast({ type: 'error', message })
     }
   })
 
@@ -67,6 +53,11 @@ export const useAuth = () => {
     mutationFn: signInStudent,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
+    onError: error => {
+      const message = handleError(error, 'signInStudent')
+
+      showToast({ type: 'error', message })
     }
   })
 
@@ -74,28 +65,27 @@ export const useAuth = () => {
     mutationFn: signInCoach,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
+    onError: error => {
+      const message = handleError(error, 'signInCoach')
+
+      showToast({ type: 'error', message })
     }
   })
 
   const signOutMutation = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
+      logout()
       showToast({ type: 'success', message: 'خروج با موفقیت انجام شد' })
+
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
       queryClient.clear()
     },
     onError: error => {
-      const statusCode = extractStatusCode(error)
+      const message = handleError(error, 'signOut')
 
-      if (statusCode === 400) {
-        showToast({ type: 'error', message: 'خروج ناموفق بود' })
-      } else if (statusCode === 500) {
-        showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
-      } else if (statusCode !== null) {
-        showToast({ type: 'error', message: 'ورود ناموفق بود' })
-      } else {
-        showToast({ type: 'error', message: 'خطای سیستمی' })
-      }
+      showToast({ type: 'error', message })
     }
   })
 
@@ -103,22 +93,42 @@ export const useAuth = () => {
     mutationFn: refreshToken,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
+    onError: error => {
+      const message = handleError(error, 'signIn')
+
+      showToast({ type: 'error', message })
     }
   })
 
   const forgetPasswordMutation = useMutation({
     mutationFn: forgetPassword,
-    onSuccess: () => {}
+    onSuccess: () => {},
+    onError: error => {
+      const message = handleError(error, 'forgetPassword')
+
+      showToast({ type: 'error', message })
+    }
   })
 
   const resetPasswordMutation = useMutation({
     mutationFn: resetPassword,
-    onSuccess: () => {}
+    onSuccess: () => {},
+    onError: error => {
+      const message = handleError(error, 'resetPassword')
+
+      showToast({ type: 'error', message })
+    }
   })
 
   const verifyOtpMutation = useMutation({
     mutationFn: verifyOtp,
-    onSuccess: () => {}
+    onSuccess: () => {},
+    onError: error => {
+      const message = handleError(error, 'verifyOtp')
+
+      showToast({ type: 'error', message })
+    }
   })
 
   return {
