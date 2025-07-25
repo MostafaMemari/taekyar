@@ -23,8 +23,6 @@ import { setCookie } from '@/utils/cookie'
 export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens>> => {
   const { rememberMe, ...cleanData } = data
 
-  console.log(cleanData, rememberMe)
-
   const res = await api(API_ROUTES.AUTH.SIGN_IN, {
     method: 'POST',
     body: cleanData
@@ -57,10 +55,26 @@ export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthToken
 }
 
 export const signUp = async (data: signupData): Promise<ApiResponse<AuthTokens>> => {
-  return api(API_ROUTES.AUTH.SIGN_UP, {
+  const res = await api(API_ROUTES.AUTH.SIGN_UP, {
     method: 'POST',
     body: data
   })
+
+  if (res?.status === 200 && res?.data?.accessToken && res?.data?.refreshToken) {
+    const { accessToken, refreshToken }: AuthTokens = res.data
+
+    await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
+    })
+
+    await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
+    })
+  }
+
+  return res
 }
 
 export const signInStudent = async (data: signupStudentData): Promise<ApiResponse<AuthTokens>> => {

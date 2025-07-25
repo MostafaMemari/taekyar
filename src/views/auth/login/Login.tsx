@@ -26,8 +26,8 @@ const LoginV1 = () => {
             <Logo />
           </Link>
           <div className='flex flex-col gap-1 mbe-6'>
-            <Typography variant='h4'>{`به ${themeConfig.templateName} خوش آمدید! 👋🏻`}</Typography>
-            <Typography>لطفاً با حساب کاربری خود وارد شوید و ماجراجویی را شروع کنید</Typography>
+            <Typography variant='h4'>{`به ${themeConfig.templateName} خوش آمدید!`}</Typography>
+            <Typography>مدیریت باشگاهت از اینجا شروع میشه</Typography>
           </div>
           <LoginForm />
         </CardContent>

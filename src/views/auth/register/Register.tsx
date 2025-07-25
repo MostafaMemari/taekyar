@@ -23,8 +23,8 @@ const Register = () => {
             <Logo />
           </Link>
           <div className='flex flex-col gap-1 mbe-6'>
-            <Typography variant='h4'>Adventure starts here 🚀</Typography>
-            <Typography>Make your app management easy and fun!</Typography>
+            <Typography variant='h4'>وقت حرکت شده! 🥋</Typography>
+            <Typography>مدیریت باشگاه رو ساده و لذت‌بخش کن!</Typography>
           </div>
           <RegisterForm />
         </CardContent>

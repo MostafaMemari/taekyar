@@ -67,8 +67,8 @@ const LoginForm = () => {
             {...field}
             autoFocus
             fullWidth
-            label='شناسه کاربری'
-            placeholder='شناسه کاربری خود را وارد کنید'
+            label='نام کاربری یا شماره موبایل'
+            placeholder='نام کاربری یا شماره موبایل خود را وارد کنید'
             error={!!errors.identifier}
             helperText={errors.identifier?.message}
           />

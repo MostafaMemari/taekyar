@@ -65,7 +65,7 @@ const RegisterForm = () => {
 
     signUp(data, {
       onSuccess: () => {
-        router.push('/auth/login')
+        router.push('/')
       }
     })
   }

@@ -52,7 +52,7 @@ export const useAuth = () => {
       const statusCode = extractStatusCode(error)
 
       if (statusCode === 409) {
-        showToast({ type: 'error', message: 'نام کاربری یا رمز عبور تکراری است' })
+        showToast({ type: 'error', message: 'نام کاربری یا شماره موبایل تکراری است' })
       } else if (statusCode === 500) {
         showToast({ type: 'error', message: 'اتباط با دیتابیس مشکل' })
       } else if (statusCode !== null) {
