@@ -16,7 +16,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 
 // Third-party Imports
 import { useForm, Controller } from 'react-hook-form'
-import { valibotResolver } from '@hookform/resolvers/valibot'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 // Component Imports
 import Link from '@components/Link'
@@ -39,7 +39,7 @@ const LoginForm = () => {
     handleSubmit,
     formState: { errors }
   } = useForm<LoginFormData>({
-    resolver: valibotResolver(loginSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       identifier: '',
       password: '',
@@ -121,7 +121,7 @@ const LoginForm = () => {
       </Button>
       <div className='flex justify-center items-center flex-wrap gap-2'>
         <Typography>کاربر جدید هستید؟</Typography>
-        <Typography component={Link} color='primary.main' href='/auth/signup'>
+        <Typography component={Link} color='primary.main' href='/auth/register'>
           ایجاد حساب کاربری
         </Typography>
       </div>

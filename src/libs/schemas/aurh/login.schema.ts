@@ -1,21 +1,17 @@
-import * as v from 'valibot'
+import { z } from 'zod'
 
-const usernameSchema = v.pipe(
-  v.string(),
-  v.minLength(3, 'نام کاربری باید حداقل ۳ کاراکتر باشد'),
-  v.maxLength(20, 'نام کاربری نباید بیشتر از ۲۰ کاراکتر باشد'),
-  v.custom(
-    val => typeof val === 'string' && /^[a-zA-Z0-9_]+$/.test(val),
-    () => 'نام کاربری فقط شامل حروف، اعداد و زیرخط باشد'
-  )
-)
+const usernameSchema = z
+  .string({ message: 'نام کاربری الزامی است' })
+  .min(3, 'نام کاربری باید حداقل ۳ کاراکتر باشد')
+  .max(20, 'نام کاربری نباید بیشتر از ۲۰ کاراکتر باشد')
+  .regex(/^[a-zA-Z0-9_]+$/, 'نام کاربری فقط شامل حروف، اعداد و زیرخط باشد')
 
-const emailSchema = v.pipe(v.string(), v.email('فرمت ایمیل معتبر نیست'))
+const emailSchema = z.string({ message: 'ایمیل الزامی است' }).email('فرمت ایمیل معتبر نیست')
 
-export const loginSchema = v.object({
-  identifier: v.union([emailSchema, usernameSchema]),
-  password: v.pipe(v.string(), v.nonEmpty('رمز عبور الزامی است'), v.minLength(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد')),
-  rememberMe: v.optional(v.boolean())
+export const loginSchema = z.object({
+  identifier: z.union([emailSchema, usernameSchema]),
+  password: z.string({ message: 'رمز عبور الزامی است' }).min(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد'),
+  rememberMe: z.boolean().optional()
 })
 
-export type LoginFormData = v.InferOutput<typeof loginSchema>
+export type LoginFormData = z.infer<typeof loginSchema>

@@ -10,14 +10,11 @@ import Link from '@components/Link'
 // Component Imports
 import Logo from '@components/layout/shared/Logo'
 
-// Config Imports
-import themeConfig from '@configs/themeConfig'
-
 // Styled Component Imports
-import AuthIllustrationWrapper from './AuthIllustrationWrapper'
-import LoginForm from './LoginForm'
+import AuthIllustrationWrapper from '../../AuthIllustrationWrapper'
+import RegisterForm from './RegisterForm'
 
-const LoginV1 = () => {
+const Register = () => {
   return (
     <AuthIllustrationWrapper>
       <Card className='flex flex-col sm:is-[450px]'>
@@ -26,14 +23,14 @@ const LoginV1 = () => {
             <Logo />
           </Link>
           <div className='flex flex-col gap-1 mbe-6'>
-            <Typography variant='h4'>{`به ${themeConfig.templateName} خوش آمدید! 👋🏻`}</Typography>
-            <Typography>لطفاً با حساب کاربری خود وارد شوید و ماجراجویی را شروع کنید</Typography>
+            <Typography variant='h4'>Adventure starts here 🚀</Typography>
+            <Typography>Make your app management easy and fun!</Typography>
           </div>
-          <LoginForm />
+          <RegisterForm />
         </CardContent>
       </Card>
     </AuthIllustrationWrapper>
   )
 }
 
-export default LoginV1
+export default Register
