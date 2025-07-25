@@ -30,8 +30,6 @@ export const useAuth = () => {
     onError: error => {
       const statusCode = extractStatusCode(error)
 
-      console.log(statusCode)
-
       if (statusCode === 401) {
         showToast({ type: 'error', message: 'نام کاربری یا کلمه عبور اشتباه است' })
       } else if (statusCode === 500) {

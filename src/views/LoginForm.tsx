@@ -13,7 +13,6 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Divider from '@mui/material/Divider'
 
 // Third-party Imports
 import { useForm, Controller } from 'react-hook-form'
@@ -43,7 +42,8 @@ const LoginForm = () => {
     resolver: valibotResolver(loginSchema),
     defaultValues: {
       identifier: '',
-      password: ''
+      password: '',
+      rememberMe: false
     }
   })
 
@@ -89,19 +89,29 @@ const LoginForm = () => {
             slotProps={{
               input: {
                 endAdornment: (
-                  <InputAdornment position='end'>
-                    <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                  <InputAdornment position='start' sx={{ margin: 0 }}>
+                    <IconButton edge='start' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
                       <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                     </IconButton>
                   </InputAdornment>
-                )
+                ),
+                sx: {
+                  paddingRight: 0,
+                  paddingLeft: 0
+                }
               }
             }}
           />
         )}
       />
       <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
-        <FormControlLabel control={<Checkbox />} label='مرا به خاطر بسپار' />
+        <Controller
+          name='rememberMe'
+          control={control}
+          render={({ field }) => (
+            <FormControlLabel control={<Checkbox {...field} checked={field.value} />} label='مرا به خاطر بسپار' />
+          )}
+        />
         <Typography className='text-end' color='primary.main' component={Link} href='/auth/forgot-password'>
           رمز عبور را فراموش کرده‌اید؟
         </Typography>
@@ -114,21 +124,6 @@ const LoginForm = () => {
         <Typography component={Link} color='primary.main' href='/auth/signup'>
           ایجاد حساب کاربری
         </Typography>
-      </div>
-      <Divider className='gap-2 text-textPrimary'>یا</Divider>
-      <div className='flex justify-center items-center gap-1.5'>
-        <IconButton className='text-facebook' size='small'>
-          <i className='tabler-brand-facebook-filled' />
-        </IconButton>
-        <IconButton className='text-twitter' size='small'>
-          <i className='tabler-brand-twitter-filled' />
-        </IconButton>
-        <IconButton className='text-textPrimary' size='small'>
-          <i className='tabler-brand-github-filled' />
-        </IconButton>
-        <IconButton className='text-error' size='small'>
-          <i className='tabler-brand-google-filled' />
-        </IconButton>
       </div>
     </form>
   )

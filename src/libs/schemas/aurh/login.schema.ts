@@ -14,7 +14,8 @@ const emailSchema = v.pipe(v.string(), v.email('فرمت ایمیل معتبر �
 
 export const loginSchema = v.object({
   identifier: v.union([emailSchema, usernameSchema]),
-  password: v.pipe(v.string(), v.nonEmpty('رمز عبور الزامی است'), v.minLength(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد'))
+  password: v.pipe(v.string(), v.nonEmpty('رمز عبور الزامی است'), v.minLength(6, 'رمز عبور باید حداقل ۶ کاراکتر باشد')),
+  rememberMe: v.optional(v.boolean())
 })
 
 export type LoginFormData = v.InferOutput<typeof loginSchema>
