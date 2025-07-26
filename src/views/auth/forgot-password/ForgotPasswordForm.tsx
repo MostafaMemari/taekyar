@@ -17,7 +17,11 @@ import Link from '@components/Link'
 import DirectionalIcon from '@/components/DirectionalIcon'
 import { useAuth } from '@/hooks/useAuth'
 
-function ForgotPasswordForm() {
+interface ForgotPasswordFormProps {
+  onSubmitSuccess: () => void
+}
+
+function ForgotPasswordForm({ onSubmitSuccess }: ForgotPasswordFormProps) {
   const { forgetPassword, forgetPasswordStatus } = useAuth()
 
   const {
@@ -36,7 +40,7 @@ function ForgotPasswordForm() {
       { mobile: data.mobile },
       {
         onSuccess: () => {
-          console.log('Password reset link sent successfully')
+          onSubmitSuccess()
         }
       }
     )
@@ -64,7 +68,7 @@ function ForgotPasswordForm() {
         {forgetPasswordStatus === 'pending' ? 'در حال ثبت ...' : 'تایید و ادامه'}
       </Button>
       <Typography className='flex justify-center items-center' color='primary.main'>
-        <Link href='/pages/auth/login' className='flex items-center gap-1.5'>
+        <Link href='/auth/login' className='flex items-center gap-1.5'>
           <DirectionalIcon ltrIconClass='tabler-chevron-left' rtlIconClass='tabler-chevron-right' className='text-xl' />
           <span>بازگشت به فرم ورود</span>
         </Link>

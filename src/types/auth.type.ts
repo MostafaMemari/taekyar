@@ -26,12 +26,6 @@ export interface forgetPasswordData {
   mobile: string
 }
 
-export interface resetPasswordData {
-  mobile: string
-  otpCode: string
-  newPassword: string
-}
-
 export interface verifyOtpData {
   otp: string
   mobile: string

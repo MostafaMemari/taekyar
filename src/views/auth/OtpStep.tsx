@@ -153,7 +153,6 @@ const OtpStep = ({ mobile, onBack }: OtpStepProps) => {
       </Button>
 
       <div className='flex justify-center items-center flex-wrap gap-2'>
-        <Typography>لطفاً کد ارسال شده به شماره زیر را وارد کنید:</Typography>
         <Typography
           color={isExpired ? 'primary.main' : 'text.disabled'}
           component={Link}

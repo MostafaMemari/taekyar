@@ -1,0 +1,119 @@
+'use client'
+
+import { useState } from 'react'
+
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Typography from '@mui/material/Typography'
+import Button from '@mui/material/Button'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+
+import CustomTextField from '@core/components/mui/TextField'
+import Link from '@components/Link'
+import DirectionalIcon from '@/components/DirectionalIcon'
+import { useAuth } from '@/hooks/useAuth'
+import { resetPasswordSchema, type ResetPasswordFormData } from '@/libs/schemas/aurh/resetPassword.schema'
+
+function ResetPasswordForm() {
+  const { resetPassword, resetPasswordStatus } = useAuth()
+  const [isPasswordShown, setIsPasswordShown] = useState(false)
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      mobile: '',
+      otpCode: '',
+      newPassword: ''
+    }
+  })
+
+  const onSubmit = (data: ResetPasswordFormData) => {
+    resetPassword(
+      { mobile: data.mobile },
+      {
+        onSuccess: () => {
+          console.log('Password reset link sent successfully')
+        }
+      }
+    )
+
+    return
+  }
+
+  const handleClickShowPassword = () => setIsPasswordShown(show => !show)
+
+  return (
+    <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+      <Controller
+        name='mobile'
+        control={control}
+        render={({ field }) => (
+          <CustomTextField
+            {...field}
+            fullWidth
+            label='شماره موبایل'
+            placeholder='09121234567'
+            error={!!errors.mobile}
+            helperText={errors.mobile?.message}
+          />
+        )}
+      />
+      <Controller
+        name='otpCode'
+        control={control}
+        render={({ field }) => (
+          <CustomTextField
+            {...field}
+            fullWidth
+            label='کد تایید'
+            placeholder='123456'
+            error={!!errors.otpCode}
+            helperText={errors.otpCode?.message}
+          />
+        )}
+      />
+      <Controller
+        name='newPassword'
+        control={control}
+        render={({ field }) => (
+          <CustomTextField
+            {...field}
+            fullWidth
+            label='رمز عبور'
+            placeholder='············'
+            type={isPasswordShown ? 'text' : 'newPassword'}
+            error={!!errors.newPassword}
+            helperText={errors.newPassword?.message}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                      <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }
+            }}
+          />
+        )}
+      />
+      <Button fullWidth variant='contained' type='submit' disabled={resetPasswordStatus === 'pending'}>
+        {resetPasswordStatus === 'pending' ? 'در حال ثبت ...' : 'تایید و ادامه'}
+      </Button>
+      <Typography className='flex justify-center items-center' color='primary.main'>
+        <Link href='/auth/login' className='flex items-center gap-1.5'>
+          <DirectionalIcon ltrIconClass='tabler-chevron-left' rtlIconClass='tabler-chevron-right' className='text-xl' />
+          <span>بازگشت به فرم ورود</span>
+        </Link>
+      </Typography>
+    </form>
+  )
+}
+
+export default ResetPasswordForm
