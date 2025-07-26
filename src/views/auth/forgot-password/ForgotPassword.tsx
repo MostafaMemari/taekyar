@@ -10,6 +10,11 @@ import ResetPasswordForm from './ResetPasswordForm'
 
 const ForgotPassword = () => {
   const [step, setStep] = useState<'forgot' | 'reset'>('forgot')
+  const [mobile, setMobile] = useState('')
+
+  const handleMobileChange = (newMobile: string) => {
+    setMobile(newMobile)
+  }
 
   return (
     <>
@@ -19,7 +24,7 @@ const ForgotPassword = () => {
             <Typography variant='h4'>فراموشی رمز عبور 🔒</Typography>
             <Typography>شماره موبایل خود را وارد کنید</Typography>
           </div>
-          <ForgotPasswordForm onSubmitSuccess={() => setStep('reset')} />{' '}
+          <ForgotPasswordForm onSubmitSuccess={() => setStep('reset')} onMobileChange={handleMobileChange} />
         </>
       ) : (
         <>
@@ -27,7 +32,7 @@ const ForgotPassword = () => {
             <Typography variant='h4'>بازنشانی رمز عبور 🔑</Typography>
             <Typography>رمز عبور جدید خود را وارد کنید</Typography>
           </div>
-          <ResetPasswordForm />
+          <ResetPasswordForm mobile={mobile} />
         </>
       )}
     </>

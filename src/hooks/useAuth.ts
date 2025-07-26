@@ -110,7 +110,9 @@ export const useAuth = () => {
 
   const forgetPasswordMutation = useMutation({
     mutationFn: forgetPassword,
-    onSuccess: () => {},
+    onSuccess: () => {
+      showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
+    },
     onError: error => {
       const { status, message } = JSON.parse(error.message)
       const time = extractTimeFromMessage(message)
@@ -122,12 +124,15 @@ export const useAuth = () => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: resetPassword,
-    onSuccess: () => {},
+    onSuccess: () => {
+      showToast({ type: 'success', message: 'رمز عبور با موفقت تغییر کرد' })
+    },
     onError: error => {
-      const { status } = JSON.parse(error.message)
+      const { status, message } = JSON.parse(error.message)
+      const time = extractTimeFromMessage(message)
       const errorMessage = handleError('resetPassword', status)
 
-      showToast({ type: 'error', message: errorMessage })
+      showToast({ type: 'error', message: time ? errorMessage.replace('${time}', time) : errorMessage })
     }
   })
 

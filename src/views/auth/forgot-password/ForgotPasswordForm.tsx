@@ -19,9 +19,10 @@ import { useAuth } from '@/hooks/useAuth'
 
 interface ForgotPasswordFormProps {
   onSubmitSuccess: () => void
+  onMobileChange: (mobile: string) => void
 }
 
-function ForgotPasswordForm({ onSubmitSuccess }: ForgotPasswordFormProps) {
+function ForgotPasswordForm({ onSubmitSuccess, onMobileChange }: ForgotPasswordFormProps) {
   const { forgetPassword, forgetPasswordStatus } = useAuth()
 
   const {
@@ -41,6 +42,7 @@ function ForgotPasswordForm({ onSubmitSuccess }: ForgotPasswordFormProps) {
       {
         onSuccess: () => {
           onSubmitSuccess()
+          onMobileChange(data.mobile)
         }
       }
     )
@@ -58,6 +60,7 @@ function ForgotPasswordForm({ onSubmitSuccess }: ForgotPasswordFormProps) {
             {...field}
             fullWidth
             label='شماره موبایل'
+            autoFocus
             placeholder='09121234567'
             error={!!errors.mobile}
             helperText={errors.mobile?.message}

@@ -11,7 +11,6 @@ import type {
   signupStudentData,
   refreshTokenData,
   forgetPasswordData,
-  resetPasswordData,
   verifyOtpData,
   AuthTokens
 } from '@/types/auth.type'
@@ -20,6 +19,7 @@ import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
 import { deleteCookie, getCookie, setCookie } from '@/utils/cookie'
 import { getUserProfile } from './user.api'
 import type { User } from '@/types/user.types'
+import type { ResetPasswordFormData } from '@/libs/schemas/aurh/resetPassword.schema'
 
 export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
   const { rememberMe, ...cleanData } = data
@@ -108,7 +108,7 @@ export const forgetPassword = async (data: forgetPasswordData): Promise<ApiRespo
   })
 }
 
-export const resetPassword = async (data: resetPasswordData): Promise<ApiResponse<null>> =>
+export const resetPassword = async (data: ResetPasswordFormData): Promise<ApiResponse<null>> =>
   api(API_ROUTES.AUTH.RESET_PASSWORD, {
     method: 'POST',
     body: data

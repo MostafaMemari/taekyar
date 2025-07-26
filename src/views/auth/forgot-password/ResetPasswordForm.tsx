@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { useRouter } from 'next/navigation'
+
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Typography from '@mui/material/Typography'
@@ -15,9 +17,14 @@ import DirectionalIcon from '@/components/DirectionalIcon'
 import { useAuth } from '@/hooks/useAuth'
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/libs/schemas/aurh/resetPassword.schema'
 
-function ResetPasswordForm() {
+interface ResetPasswordFormProps {
+  mobile: string
+}
+
+function ResetPasswordForm({ mobile }: ResetPasswordFormProps) {
   const { resetPassword, resetPasswordStatus } = useAuth()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const router = useRouter()
 
   const {
     control,
@@ -26,21 +33,18 @@ function ResetPasswordForm() {
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      mobile: '',
+      mobile,
       otpCode: '',
       newPassword: ''
     }
   })
 
   const onSubmit = (data: ResetPasswordFormData) => {
-    resetPassword(
-      { mobile: data.mobile },
-      {
-        onSuccess: () => {
-          console.log('Password reset link sent successfully')
-        }
+    resetPassword(data, {
+      onSuccess: () => {
+        router.push('/auth/login')
       }
-    )
+    })
 
     return
   }
@@ -49,20 +53,6 @@ function ResetPasswordForm() {
 
   return (
     <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
-      <Controller
-        name='mobile'
-        control={control}
-        render={({ field }) => (
-          <CustomTextField
-            {...field}
-            fullWidth
-            label='شماره موبایل'
-            placeholder='09121234567'
-            error={!!errors.mobile}
-            helperText={errors.mobile?.message}
-          />
-        )}
-      />
       <Controller
         name='otpCode'
         control={control}
@@ -86,7 +76,7 @@ function ResetPasswordForm() {
             fullWidth
             label='رمز عبور'
             placeholder='············'
-            type={isPasswordShown ? 'text' : 'newPassword'}
+            type={isPasswordShown ? 'text' : 'password'}
             error={!!errors.newPassword}
             helperText={errors.newPassword?.message}
             slotProps={{

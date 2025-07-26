@@ -49,7 +49,9 @@ export const handleError = (mutationType: MutationType, statusCode: number): str
       default: 'ارسال لینک بازیابی ناموفق بود'
     },
     resetPassword: {
-      400: 'رمز عبور نامعتبر است',
+      403: 'لطفا ${time} دیگر امتحان کنید',
+      409: 'لطفا ${time} دیگر امتحان کنید',
+      400: 'کد تایید نامعتبر است',
       500: 'اتصال به دیتابیس مشکل دارد',
       default: 'تغییر رمز عبور ناموفق بود'
     },
