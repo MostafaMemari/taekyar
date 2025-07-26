@@ -5,11 +5,6 @@ import { useState } from 'react'
 // MUI Imports
 import Typography from '@mui/material/Typography'
 
-import Link from '@components/Link'
-
-// Component Imports
-import Logo from '@components/layout/shared/Logo'
-
 // Styled Component Imports
 import RegisterForm from './RegisterForm'
 import OtpStep from '../OtpStep'
@@ -26,10 +21,6 @@ const Register = () => {
 
   return (
     <>
-      <Link className='flex justify-center mbe-6'>
-        <Logo />
-      </Link>
-
       {step === 'otp' ? (
         <>
           <div className='flex flex-col gap-1 mbe-6'>

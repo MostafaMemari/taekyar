@@ -1,9 +1,15 @@
-import { extractStatusCode } from './error'
+type MutationType =
+  | 'signIn'
+  | 'signUp'
+  | 'signInStudent'
+  | 'signInCoach'
+  | 'signOut'
+  | 'refreshToken'
+  | 'forgetPassword'
+  | 'resetPassword'
+  | 'verifyOtp'
 
-// src/utils/errorHandler.ts
-export const handleError = (error: unknown, mutationType: string): string => {
-  const statusCode = extractStatusCode(error)
-
+export const handleError = (mutationType: MutationType, statusCode: number): string => {
   const messages: Record<string, Record<number | string, string>> = {
     signIn: {
       401: 'نام کاربری یا کلمه عبور اشتباه است',
@@ -36,6 +42,8 @@ export const handleError = (error: unknown, mutationType: string): string => {
       default: 'به‌روزرسانی توکن ناموفق بود'
     },
     forgetPassword: {
+      403: 'لطفا ${time} دیگر امتحان کنید',
+      409: 'لطفا ${time} دیگر امتحان کنید',
       400: 'ایمیل یا شماره موبایل نامعتبر است',
       500: 'اتصال به دیتابیس مشکل دارد',
       default: 'ارسال لینک بازیابی ناموفق بود'

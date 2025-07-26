@@ -158,7 +158,6 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   },
   '& .MuiFormHelperText-root': {
     lineHeight: 1.154,
-    textAlign: 'right',
     margin: theme.spacing(1, 0, 0),
     fontSize: theme.typography.body2.fontSize,
     '&.Mui-error': {

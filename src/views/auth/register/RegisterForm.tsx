@@ -119,16 +119,12 @@ const RegisterForm = ({ onSubmitSuccess, onMobileChange }: RegisterFormProps) =>
             slotProps={{
               input: {
                 endAdornment: (
-                  <InputAdornment position='start' sx={{ margin: 0 }}>
-                    <IconButton edge='start' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                  <InputAdornment position='end'>
+                    <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
                       <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                     </IconButton>
                   </InputAdornment>
-                ),
-                sx: {
-                  paddingRight: 0,
-                  paddingLeft: 0
-                }
+                )
               }
             }}
           />
@@ -149,20 +145,16 @@ const RegisterForm = ({ onSubmitSuccess, onMobileChange }: RegisterFormProps) =>
             slotProps={{
               input: {
                 endAdornment: (
-                  <InputAdornment position='start' sx={{ margin: 0 }}>
+                  <InputAdornment position='end'>
                     <IconButton
-                      edge='start'
+                      edge='end'
                       onClick={handleClickShowConfirmPassword}
                       onMouseDown={e => e.preventDefault()}
                     >
                       <i className={isConfirmPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                     </IconButton>
                   </InputAdornment>
-                ),
-                sx: {
-                  paddingRight: 0,
-                  paddingLeft: 0
-                }
+                )
               }
             }}
           />

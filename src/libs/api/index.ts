@@ -24,12 +24,9 @@ export const api = ofetch.create({
   },
 
   async onResponseError({ response }) {
-    let data = response._data
-
-    try {
-      data = await response.json()
-    } catch {}
-
-    throw { status: response.status, data }
+    throw JSON.stringify({
+      status: response.status,
+      message: response._data.message
+    })
   }
 })

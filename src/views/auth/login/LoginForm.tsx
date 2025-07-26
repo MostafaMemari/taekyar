@@ -89,16 +89,12 @@ const LoginForm = () => {
             slotProps={{
               input: {
                 endAdornment: (
-                  <InputAdornment position='start' sx={{ margin: 0 }}>
-                    <IconButton edge='start' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
+                  <InputAdornment position='end' sx={{ margin: 0 }}>
+                    <IconButton edge='end' onClick={handleClickShowPassword} onMouseDown={e => e.preventDefault()}>
                       <i className={isPasswordShown ? 'tabler-eye-off' : 'tabler-eye'} />
                     </IconButton>
                   </InputAdornment>
-                ),
-                sx: {
-                  paddingRight: 0,
-                  paddingLeft: 0
-                }
+                )
               }
             }}
           />
