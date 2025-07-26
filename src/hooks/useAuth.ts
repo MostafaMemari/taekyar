@@ -37,9 +37,8 @@ export const useAuth = () => {
 
   const signUpMutation = useMutation({
     mutationFn: signUp,
-    onSuccess: response => {
-      loginSuccess(response.data.user)
-      showToast({ type: 'success', message: 'ثبت نام با موفقیت انجام شد' })
+    onSuccess: () => {
+      showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
@@ -123,7 +122,11 @@ export const useAuth = () => {
 
   const verifyOtpMutation = useMutation({
     mutationFn: verifyOtp,
-    onSuccess: () => {},
+    onSuccess: response => {
+      loginSuccess(response.data.user)
+      showToast({ type: 'success', message: 'کد تایید با موفقیت بررسی شد' })
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+    },
     onError: error => {
       const message = handleError(error, 'verifyOtp')
 

@@ -3,9 +3,6 @@
 // React Imports
 import { useState } from 'react'
 
-// Next Imports
-import { useRouter } from 'next/navigation'
-
 // MUI Imports
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
@@ -26,14 +23,17 @@ import { useAuth } from '@/hooks/useAuth'
 import { type RegisterFormData, RegisterSchema } from '@/libs/schemas/aurh/register.schema'
 import { showToast } from '@/utils/showToast'
 
-const RegisterForm = () => {
+interface RegisterFormProps {
+  onSubmitSuccess: () => void
+  onMobileChange: (mobile: string) => void
+}
+
+const RegisterForm = ({ onSubmitSuccess, onMobileChange }: RegisterFormProps) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
   const [agreed, setAgreed] = useState(false)
 
-  // Hooks
-  const router = useRouter()
   const { signUp, signUpStatus } = useAuth()
 
   const {
@@ -65,7 +65,10 @@ const RegisterForm = () => {
 
     signUp(data, {
       onSuccess: () => {
-        router.push('/')
+        onSubmitSuccess()
+        onMobileChange(data.mobile)
+
+        // router.push('/')
       }
     })
   }

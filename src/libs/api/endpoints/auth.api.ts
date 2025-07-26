@@ -57,29 +57,11 @@ export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthToken
   return { ...res, data: { ...res.data, user: user.data } }
 }
 
-export const signUp = async (data: signupData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
-  const res = await api(API_ROUTES.AUTH.SIGN_UP, {
+export const signUp = async (data: signupData): Promise<ApiResponse<{}>> => {
+  return await api(API_ROUTES.AUTH.SIGN_UP, {
     method: 'POST',
     body: data
   })
-
-  if (res?.status === 200 && res?.data?.accessToken && res?.data?.refreshToken) {
-    const { accessToken, refreshToken }: AuthTokens = res.data
-
-    await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
-      httpOnly: true,
-      expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
-    })
-
-    await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
-      httpOnly: true,
-      expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
-    })
-  }
-
-  const user = await getUserProfile()
-
-  return { ...res, data: { ...res.data, user: user.data } }
 }
 
 export const signInStudent = async (data: signupStudentData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
@@ -132,9 +114,29 @@ export const resetPassword = async (data: resetPasswordData): Promise<ApiRespons
     body: data
   })
 
-export const verifyOtp = async (data: verifyOtpData): Promise<ApiResponse<null>> => {
-  return api(API_ROUTES.AUTH.VERIFY_OTP, {
+export const verifyOtp = async (data: verifyOtpData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
+  const res = await api(API_ROUTES.AUTH.VERIFY_OTP, {
     method: 'POST',
     body: data
   })
+
+  console.log(res)
+
+  if (res?.status === 201 && res?.data?.accessToken && res?.data?.refreshToken) {
+    const { accessToken, refreshToken }: AuthTokens = res.data
+
+    await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
+    })
+
+    await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
+    })
+  }
+
+  const user = await getUserProfile()
+
+  return { ...res, data: { ...res.data, user: user.data } }
 }
