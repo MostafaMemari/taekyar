@@ -27,7 +27,7 @@ const Register = () => {
           <div className='flex flex-col gap-1 mbe-6'>
             <Typography variant='h4'>تأیید دو مرحله‌ای 💬</Typography>
             <Typography>لطفاً کد ارسال شده به شماره زیر را وارد کنید:</Typography>
-            <Typography className='font-medium' color='text.primary' dir='ltr'>
+            <Typography className='font-medium text-center' color='text.primary' dir='ltr'>
               {maskedPhoneNumber}
             </Typography>
           </div>
