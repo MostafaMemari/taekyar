@@ -7,17 +7,18 @@ import Typography from '@mui/material/Typography'
 
 // Styled Component Imports
 import RegisterForm from './RegisterForm'
-import OtpStep from '../OtpStep'
+import OtpStep from './OtpStep'
+import type { RegisterFormData } from '@/libs/schemas/aurh/register.schema'
 
 const Register = () => {
   const [step, setStep] = useState<'register' | 'otp'>('register')
-  const [mobile, setMobile] = useState('')
+  const [registerData, setRegisterData] = useState<RegisterFormData | null>(null)
 
-  const handleMobileChange = (newMobile: string) => {
-    setMobile(newMobile)
+  const maskedPhoneNumber = registerData?.mobile.slice(0, -4) + '****'
+
+  const handleChangeRegisterData = (data: RegisterFormData) => {
+    setRegisterData(data)
   }
-
-  const maskedPhoneNumber = mobile.slice(0, -4) + '****'
 
   return (
     <>
@@ -30,7 +31,7 @@ const Register = () => {
               {maskedPhoneNumber}
             </Typography>
           </div>
-          <OtpStep mobile={mobile} onBack={() => setStep('register')} />
+          {registerData && <OtpStep registerData={registerData} onBack={() => setStep('register')} />}
         </>
       ) : (
         <>
@@ -38,7 +39,7 @@ const Register = () => {
             <Typography variant='h4'>وقت حرکت شده! 🥋</Typography>
             <Typography>مدیریت باشگاه رو ساده و لذت‌بخش کن!</Typography>
           </div>
-          <RegisterForm onSubmitSuccess={() => setStep('otp')} onMobileChange={handleMobileChange} />
+          <RegisterForm onSubmitSuccess={() => setStep('otp')} onChangeRegisterData={handleChangeRegisterData} />
         </>
       )}
     </>

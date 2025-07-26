@@ -42,13 +42,15 @@ export const useAuth = () => {
     mutationFn: signUp,
     onSuccess: () => {
       showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
+
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
+      const { status, message } = JSON.parse(error.message)
+      const time = extractTimeFromMessage(message)
       const errorMessage = handleError('signUp', status)
 
-      showToast({ type: 'error', message: errorMessage })
+      showToast({ type: 'error', message: time ? errorMessage.replace('${time}', time) : errorMessage })
     }
   })
 

@@ -25,10 +25,10 @@ import { showToast } from '@/utils/showToast'
 
 interface RegisterFormProps {
   onSubmitSuccess: () => void
-  onMobileChange: (mobile: string) => void
+  onChangeRegisterData: (data: RegisterFormData) => void
 }
 
-const RegisterForm = ({ onSubmitSuccess, onMobileChange }: RegisterFormProps) => {
+const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormProps) => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
@@ -66,7 +66,7 @@ const RegisterForm = ({ onSubmitSuccess, onMobileChange }: RegisterFormProps) =>
     signUp(data, {
       onSuccess: () => {
         onSubmitSuccess()
-        onMobileChange(data.mobile)
+        onChangeRegisterData(data)
 
         // router.push('/')
       }

@@ -17,6 +17,7 @@ export const handleError = (mutationType: MutationType, statusCode: number): str
       default: 'ورود ناموفق بود'
     },
     signUp: {
+      403: 'لطفا ${time} دیگر امتحان کنید',
       409: 'نام کاربری یا شماره موبایل تکراری است',
       500: 'اتصال به دیتابیس مشکل دارد',
       default: 'ثبت نام ناموفق بود'

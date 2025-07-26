@@ -14,9 +14,6 @@ import { OTPInput } from 'input-otp'
 import type { SlotProps } from 'input-otp'
 import classnames from 'classnames'
 
-// Components
-import Link from '@components/Link'
-
 // Styles
 import styles from '@/libs/styles/inputOtp.module.css'
 
@@ -25,6 +22,7 @@ import { showToast } from '@/utils/showToast'
 
 import { useAuth } from '@/hooks/useAuth'
 import { useOtpTimer } from '@/hooks/useOtpTimer'
+import type { RegisterFormData } from '@/libs/schemas/aurh/register.schema'
 
 const Slot = (props: SlotProps & { isError?: boolean }) => (
   <div
@@ -45,16 +43,15 @@ const FakeCaret = () => (
 )
 
 interface OtpStepProps {
-  mobile: string
+  registerData: RegisterFormData
   onBack: () => void
 }
 
-const OtpStep = ({ mobile, onBack }: OtpStepProps) => {
-  const { verifyOtp, verifyOtpStatus } = useAuth()
+const OtpStep = ({ registerData, onBack }: OtpStepProps) => {
+  const { verifyOtp, verifyOtpStatus, signUp, signUpStatus } = useAuth()
 
   const [otp, setOtp] = useState('')
   const [isError, setIsError] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const otpInputRef = useRef<HTMLInputElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
   const router = useRouter()
@@ -73,40 +70,47 @@ const OtpStep = ({ mobile, onBack }: OtpStepProps) => {
   }, [])
 
   const handleSubmit = useCallback(async () => {
-    setIsLoading(true)
-
     if (otp.length === 6 && /^\d{6}$/.test(otp)) {
-      if (isExpired) {
+      if (!isExpired) {
+        verifyOtp(
+          { mobile: registerData.mobile, otp },
+          {
+            onSuccess: () => {
+              router.push('/')
+            },
+            onError: () => {
+              resetOtpForm()
+            }
+          }
+        )
+      } else {
         resetOtpForm()
 
         return showToast({ type: 'error', message: 'زمان شما به اتمام رسیده' })
       }
 
-      verifyOtp(
-        { mobile, otp },
-        {
-          onSuccess: () => {
-            setIsLoading(false)
-            router.push('/')
-          },
-          onError: () => {
-            setIsLoading(false)
-            resetOtpForm()
-          }
-        }
-      )
-
       formRef.current?.requestSubmit()
     } else {
       showToast({ type: 'error', message: 'کد اعتبار سنجی اشتباه است' })
     }
-  }, [otp, isExpired, mobile, resetOtpForm, verifyOtp, router])
+  }, [otp, isExpired, registerData.mobile, resetOtpForm, verifyOtp, router])
 
   useEffect(() => {
     if (otp.length === 6 && /^\d{6}$/.test(otp)) {
       handleSubmit()
     }
   }, [otp, handleSubmit])
+
+  const handleResetOtpForm = () => {
+    if (isExpired) {
+      signUp(registerData, {
+        onSuccess: () => {
+          resetTimer()
+          resetOtpForm()
+        }
+      })
+    }
+  }
 
   return (
     <form
@@ -116,7 +120,7 @@ const OtpStep = ({ mobile, onBack }: OtpStepProps) => {
       onSubmit={e => {
         e.preventDefault()
       }}
-      className='flex flex-col gap-6'
+      className='flex flex-col gap-2'
     >
       <div className='flex flex-col gap-2'>
         <Typography>کد امنیتی ۶ رقمی را وارد کنید</Typography>
@@ -146,29 +150,17 @@ const OtpStep = ({ mobile, onBack }: OtpStepProps) => {
         fullWidth
         variant='contained'
         type='submit'
-        disabled={otp.length !== 6 || isExpired || isLoading || verifyOtpStatus === 'pending'}
-        startIcon={isLoading ? <CircularProgress size={20} color='inherit' /> : null}
+        disabled={otp.length !== 6 || isExpired || verifyOtpStatus === 'pending'}
+        startIcon={verifyOtpStatus === 'pending' ? <CircularProgress size={20} color='inherit' /> : null}
       >
-        {isLoading || verifyOtpStatus === 'pending' ? 'در حال بررسی...' : 'تأیید کد'}
+        {verifyOtpStatus === 'pending' ? 'در حال بررسی...' : 'تأیید کد'}
       </Button>
 
-      <div className='flex justify-center items-center flex-wrap gap-2'>
-        <Typography
-          color={isExpired ? 'primary.main' : 'text.disabled'}
-          component={Link}
-          href='/'
-          onClick={e => {
-            e.preventDefault()
-
-            if (isExpired) {
-              resetTimer()
-              setOtp('')
-            }
-          }}
-        >
-          {isExpired ? 'ارسال مجدد کد' : 'ارسال مجدد کد'}
-        </Typography>
-      </div>
+      {isExpired && (
+        <Button color='secondary' onClick={handleResetOtpForm}>
+          {signUpStatus === 'pending' ? 'در حال ارسال...' : 'ارسال مجدد کد'}
+        </Button>
+      )}
 
       <Button variant='text' onClick={onBack}>
         بازگشت
