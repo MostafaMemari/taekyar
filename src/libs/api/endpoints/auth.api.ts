@@ -120,8 +120,6 @@ export const verifyOtp = async (data: verifyOtpData): Promise<ApiResponse<AuthTo
     body: data
   })
 
-  console.log(res)
-
   if (res?.status === 201 && res?.data?.accessToken && res?.data?.refreshToken) {
     const { accessToken, refreshToken }: AuthTokens = res.data
 
