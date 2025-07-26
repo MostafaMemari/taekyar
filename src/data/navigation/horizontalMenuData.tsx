@@ -1,5 +1,6 @@
 // Type Imports
 import type { HorizontalMenuDataType } from '@/types/menu.types'
+import { UserRole } from '@/types/user.types'
 
 const horizontalMenuData = (): HorizontalMenuDataType[] => [
   {
@@ -13,11 +14,13 @@ const horizontalMenuData = (): HorizontalMenuDataType[] => [
     children: [
       {
         label: 'لیست کاربران',
-        href: '/users'
+        href: '/users',
+        roles: [UserRole.COACH, UserRole.SUPER_ADMIN]
       },
       {
         label: 'جستجوی کاربران',
-        href: '/users/search'
+        href: '/users/search',
+        roles: [UserRole.COACH, UserRole.SUPER_ADMIN]
       },
       {
         label: 'پروفایل من',
