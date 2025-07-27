@@ -19,24 +19,43 @@ import type {
 import { SubMenu as HorizontalSubMenu, MenuItem as HorizontalMenuItem } from '@menu/horizontal-menu'
 import { SubMenu as VerticalSubMenu, MenuItem as VerticalMenuItem, MenuSection } from '@menu/vertical-menu'
 import CustomChip from '@core/components/mui/Chip'
+import { UserRole } from '@/types/user.types'
+
+const filterSuperAdminItems = (items: VerticalMenuDataType[], role: UserRole): VerticalMenuDataType[] => {
+  return items
+    .filter(item => {
+      return item.roles ? item.roles.includes(role) : false
+    })
+    .map(item => {
+      if ('children' in item && item.children) {
+        return {
+          ...item,
+          children: filterSuperAdminItems(item.children, role)
+        }
+      }
+
+      return item
+    })
+}
+
+interface GenerateMenuProps {
+  menuData: VerticalMenuDataType[] | HorizontalMenuDataType[]
+  role?: UserRole
+}
 
 // Generate a menu from the menu data array
-export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataType[] }) => {
-  // Hooks
-
+export const GenerateVerticalMenu = ({ menuData, role }: GenerateMenuProps) => {
   const renderMenuItems = (data: VerticalMenuDataType[]) => {
-    // Use the map method to iterate through the array of menu data
-    return data.map((item: VerticalMenuDataType, index) => {
+    const filteredData = filterSuperAdminItems(data, role || UserRole.COACH)
+
+    return filteredData.map((item: VerticalMenuDataType, index) => {
       const menuSectionItem = item as VerticalSectionDataType
       const subMenuItem = item as VerticalSubMenuDataType
       const menuItem = item as VerticalMenuItemDataType
 
-      // Check if the current item is a section
       if (menuSectionItem.isSection) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { children, isSection, ...rest } = menuSectionItem
+        const { children, ...rest } = menuSectionItem
 
-        // If it is, return a MenuSection component and call generateMenu with the current menuSectionItem's children
         return (
           <MenuSection key={index} {...rest}>
             {children && renderMenuItems(children)}
@@ -44,10 +63,8 @@ export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataT
         )
       }
 
-      // Check if the current item is a sub menu
       if (subMenuItem.children) {
         const { children, icon, prefix, suffix, ...rest } = subMenuItem
-
         const Icon = icon ? <i className={icon} /> : null
 
         const subMenuPrefix: ReactNode =
@@ -64,7 +81,6 @@ export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataT
             (suffix as ReactNode)
           )
 
-        // If it is, return a SubMenu component and call generateMenu with the current subMenuItem's children
         return (
           <VerticalSubMenu
             key={index}
@@ -78,12 +94,8 @@ export const GenerateVerticalMenu = ({ menuData }: { menuData: VerticalMenuDataT
         )
       }
 
-      // If the current item is neither a section nor a sub menu, return a MenuItem component
       const { label, icon, prefix, suffix, ...rest } = menuItem
-
-      // Localize the href
       const href = rest.href
-
       const Icon = icon ? <i className={icon} /> : null
 
       const menuItemPrefix: ReactNode =
@@ -124,6 +136,7 @@ export const GenerateHorizontalMenu = ({ menuData }: { menuData: HorizontalMenuD
 
   const renderMenuItems = (data: HorizontalMenuDataType[]) => {
     // Use the map method to iterate through the array of menu data
+
     return data.map((item: HorizontalMenuDataType, index) => {
       const subMenuItem = item as HorizontalSubMenuDataType
       const menuItem = item as HorizontalMenuItemDataType

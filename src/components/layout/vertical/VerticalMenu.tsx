@@ -23,6 +23,7 @@ import { GenerateVerticalMenu } from '@/components/GenerateMenu'
 
 // Menu Data Imports
 import menuData from '@/data/navigation/verticalMenuData'
+import { useAuthStore } from '@/store'
 
 type RenderExpandIconProps = {
   open?: boolean
@@ -43,6 +44,8 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   // Hooks
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
+
+  const { user } = useAuthStore()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
@@ -86,7 +89,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <GenerateVerticalMenu menuData={menuData()} />
+        <GenerateVerticalMenu menuData={menuData()} role={user?.role} />
       </Menu>
     </ScrollWrapper>
   )

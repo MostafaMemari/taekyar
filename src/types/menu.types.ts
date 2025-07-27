@@ -20,7 +20,7 @@ import type { UserRole } from './user.types'
 // Vertical Menu Data
 export type VerticalMenuItemDataType = Omit<
   VerticalMenuItemProps,
-  'children' | 'exactMatch' | 'activeUrl' | 'icon' | 'prefix' | 'suffix'
+  'children' | 'exactMatch' | 'activeUrl' | 'icon' | 'prefix' | 'suffix' | 'roles'
 > &
   MenuItemExactMatchUrlProps & {
     label: ReactNode
@@ -30,7 +30,10 @@ export type VerticalMenuItemDataType = Omit<
     suffix?: ReactNode | ChipProps
     roles?: UserRole[]
   }
-export type VerticalSubMenuDataType = Omit<VerticalSubMenuProps, 'children' | 'icon' | 'prefix' | 'suffix'> & {
+export type VerticalSubMenuDataType = Omit<
+  VerticalSubMenuProps,
+  'children' | 'icon' | 'prefix' | 'suffix' | 'roles'
+> & {
   children: VerticalMenuDataType[]
   icon?: string
   prefix?: ReactNode | ChipProps
@@ -40,6 +43,7 @@ export type VerticalSubMenuDataType = Omit<VerticalSubMenuProps, 'children' | 'i
 export type VerticalSectionDataType = Omit<VerticalMenuSectionProps, 'children'> & {
   isSection: boolean
   children: VerticalMenuDataType[]
+  roles?: UserRole[]
 }
 export type VerticalMenuDataType = VerticalMenuItemDataType | VerticalSubMenuDataType | VerticalSectionDataType
 
