@@ -20,6 +20,7 @@ import '@/app/globals.css'
 import '@assets/iconify-icons/generated-icons.css'
 
 import QueryProvider from './providers'
+import AppInitializer from '@/components/common/AppInitializer'
 
 export const metadata = {
   title: 'تک‌یار | یار همراه تکواندوکاران',
@@ -52,6 +53,7 @@ const RootLayout = async (props: ChildrenType) => {
           pauseOnHover
         />
         <InitColorSchemeScript attribute='data' defaultMode={systemMode} />
+        <AppInitializer />
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
