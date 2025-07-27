@@ -60,8 +60,9 @@ function ResetPasswordForm({ mobile }: ResetPasswordFormProps) {
           <CustomTextField
             {...field}
             fullWidth
-            label='کد تایید'
+            label='کد اعتبار سنجی'
             placeholder='123456'
+            autoFocus
             error={!!errors.otpCode}
             helperText={errors.otpCode?.message}
           />

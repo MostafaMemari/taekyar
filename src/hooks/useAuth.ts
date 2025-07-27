@@ -16,9 +16,6 @@ import { QueryKeys } from '@/libs/constants'
 import { showToast } from '@/utils/showToast'
 import { useAuthStore } from '@/store'
 
-import { handleError } from '@/utils/errorHandler'
-import { extractTimeFromMessage } from '@/utils/extractTimeFromMessage'
-
 export const useAuth = () => {
   const queryClient = useQueryClient()
   const { loginSuccess, loginStart, loginFailure, logout } = useAuthStore()
@@ -32,12 +29,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('signIn', status)
+      const message = error.message
 
-      loginFailure(errorMessage)
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
-      showToast({ type: 'error', message: errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -49,11 +43,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status, message } = JSON.parse(error.message)
-      const time = extractTimeFromMessage(message)
-      const errorMessage = handleError('signUp', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: time ? errorMessage.replace('${time}', time) : errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -63,10 +55,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('signInStudent', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -76,10 +67,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('signInCoach', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -103,10 +93,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('refreshToken', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -116,11 +105,9 @@ export const useAuth = () => {
       showToast({ type: 'success', message: 'کد اعتبار سنجی با موفقیت ارسال شد' })
     },
     onError: error => {
-      const { status, message } = JSON.parse(error.message)
-      const time = extractTimeFromMessage(message)
-      const errorMessage = handleError('forgetPassword', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: time ? errorMessage.replace('${time}', time) : errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -130,11 +117,9 @@ export const useAuth = () => {
       showToast({ type: 'success', message: 'رمز عبور با موفقت تغییر کرد' })
     },
     onError: error => {
-      const { status, message } = JSON.parse(error.message)
-      const time = extractTimeFromMessage(message)
-      const errorMessage = handleError('resetPassword', status)
+      const message = error.message
 
-      showToast({ type: 'error', message: time ? errorMessage.replace('${time}', time) : errorMessage })
+      showToast({ type: 'error', message })
     }
   })
 
@@ -147,12 +132,9 @@ export const useAuth = () => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
     },
     onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('verifyOtp', status)
+      const message = error.message
 
-      loginFailure(errorMessage)
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
-      showToast({ type: 'error', message: errorMessage })
+      handleAuthError(message, queryClient, loginFailure)
     }
   })
 
@@ -176,4 +158,10 @@ export const useAuth = () => {
     resetPasswordStatus: resetPasswordMutation.status,
     verifyOtpStatus: verifyOtpMutation.status
   }
+}
+
+function handleAuthError(message: string, queryClient: any, loginFailure: (message: string) => void) {
+  showToast({ type: 'error', message })
+  loginFailure(message)
+  queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
 }

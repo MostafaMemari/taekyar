@@ -6,6 +6,7 @@ import { ofetch } from 'ofetch'
 import { COOKIE_NAMES } from '../constants'
 import { deleteCookie, getCookie } from '@/utils/cookie'
 import { refreshToken } from './endpoints/auth.api'
+import { API_ROUTES } from './routes'
 
 export const api = ofetch.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -22,6 +23,13 @@ export const api = ofetch.create({
     }
   },
   async onResponseError({ request, options, response }: any) {
+    if (String(request).slice(options.baseURL.length) === API_ROUTES.AUTH.SIGN_OUT) {
+      await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
+      await deleteCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
+      return
+    }
+
     if (response.status === 401 && response._data?.message === 'jwt expired') {
       try {
         const res = await refreshToken()
@@ -36,6 +44,9 @@ export const api = ofetch.create({
 
         return await ofetch(request, options)
       } catch (error) {
+        await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
+        await deleteCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
         throw new Error(
           JSON.stringify({
             status: response.status,
@@ -43,18 +54,8 @@ export const api = ofetch.create({
           })
         )
       }
-    } else if (response.status === 404 && response._data?.message === 'Refresh token not found') {
-      await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
-      await deleteCookie(COOKIE_NAMES.REFRESH_TOKEN)
-
-      return
     }
 
-    throw new Error(
-      JSON.stringify({
-        status: response.status,
-        message: response._data?.message || 'Request failed'
-      })
-    )
+    throw new Error(response._data?.message || 'Request failed')
   }
 })
