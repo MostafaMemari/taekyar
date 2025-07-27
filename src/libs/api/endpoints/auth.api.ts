@@ -69,11 +69,11 @@ export const signInCoach = async (data: { nationalCode: string }): Promise<ApiRe
 }
 
 export const signOut = async (): Promise<ApiResponse<null>> => {
-  console.log('Sign out called at', new Date().toLocaleTimeString('fa-IR'))
-
   const refreshToken = await getCookie(COOKIE_NAMES.REFRESH_TOKEN)
 
   if (!refreshToken) {
+    await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
+
     return {
       data: null,
       error: true,
