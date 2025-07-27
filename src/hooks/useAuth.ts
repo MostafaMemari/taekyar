@@ -21,11 +21,12 @@ import { extractTimeFromMessage } from '@/utils/extractTimeFromMessage'
 
 export const useAuth = () => {
   const queryClient = useQueryClient()
-  const { loginSuccess, logout } = useAuthStore()
+  const { loginSuccess, loginStart, loginFailure, logout } = useAuthStore()
 
   const signInMutation = useMutation({
     mutationFn: signIn,
     onSuccess: response => {
+      loginStart()
       loginSuccess(response.data.user)
       showToast({ type: 'success', message: 'ورود با موفقیت انجام شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
@@ -34,6 +35,8 @@ export const useAuth = () => {
       const { status } = JSON.parse(error.message)
       const errorMessage = handleError('signIn', status)
 
+      loginFailure(errorMessage)
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
       showToast({ type: 'error', message: errorMessage })
     }
   })
@@ -141,6 +144,7 @@ export const useAuth = () => {
   const verifyOtpMutation = useMutation({
     mutationFn: verifyOtp,
     onSuccess: response => {
+      loginStart()
       loginSuccess(response.data.user)
       showToast({ type: 'success', message: 'کد تایید با موفقیت بررسی شد' })
       queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
@@ -149,6 +153,8 @@ export const useAuth = () => {
       const { status } = JSON.parse(error.message)
       const errorMessage = handleError('verifyOtp', status)
 
+      loginFailure(errorMessage)
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
       showToast({ type: 'error', message: errorMessage })
     }
   })
