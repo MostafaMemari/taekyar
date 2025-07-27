@@ -40,11 +40,12 @@ const filterSuperAdminItems = (items: VerticalMenuDataType[], role: UserRole): V
 
 interface GenerateMenuProps {
   menuData: VerticalMenuDataType[] | HorizontalMenuDataType[]
+  isLoading?: boolean
   role?: UserRole
 }
 
 // Generate a menu from the menu data array
-export const GenerateVerticalMenu = ({ menuData, role }: GenerateMenuProps) => {
+export const GenerateVerticalMenu = ({ menuData, role, isLoading }: GenerateMenuProps) => {
   const renderMenuItems = (data: VerticalMenuDataType[]) => {
     const filteredData = filterSuperAdminItems(data, role || UserRole.COACH)
 
@@ -127,7 +128,7 @@ export const GenerateVerticalMenu = ({ menuData, role }: GenerateMenuProps) => {
     })
   }
 
-  return <>{renderMenuItems(menuData)}</>
+  return <>{!isLoading && renderMenuItems(menuData)}</>
 }
 
 // Generate a menu from the menu data array

@@ -45,7 +45,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
   const theme = useTheme()
   const verticalNavOptions = useVerticalNav()
 
-  const { user } = useAuthStore()
+  const { user, isLoading } = useAuthStore()
 
   // Vars
   const { isBreakpointReached, transitionDuration } = verticalNavOptions
@@ -89,7 +89,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
         renderExpandedMenuItemIcon={{ icon: <i className='tabler-circle text-xs' /> }}
         menuSectionStyles={menuSectionStyles(verticalNavOptions, theme)}
       >
-        <GenerateVerticalMenu menuData={menuData()} role={user?.role} />
+        <GenerateVerticalMenu menuData={menuData()} role={user?.role} isLoading={isLoading} />
       </Menu>
     </ScrollWrapper>
   )
