@@ -1,12 +1,12 @@
 export interface ApiResponse<T> {
   data: T
-  error: false
+  error: boolean
   message: string
   status: number
 }
 
 export interface ApiErrorResponse {
-  error: true
+  error: boolean
   message: string | string[]
   status: number
 }

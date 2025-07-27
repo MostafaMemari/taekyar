@@ -24,6 +24,7 @@ import Button from '@mui/material/Button'
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
 import { useAuth } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store'
 
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
@@ -46,6 +47,7 @@ const UserDropdown = () => {
   const router = useRouter()
   const { settings } = useSettings()
   const { signOut, signOutStatus } = useAuth()
+  const { user } = useAuthStore()
 
   const handleDropdownOpen = () => {
     !open ? setOpen(true) : setOpen(false)
@@ -64,8 +66,12 @@ const UserDropdown = () => {
   }
 
   const handleUserLogout = async () => {
+    setOpen(false)
     signOut(undefined, {
       onSuccess: () => {
+        router.push('/auth/login')
+      },
+      onError: () => {
         router.push('/auth/login')
       }
     })
@@ -82,7 +88,7 @@ const UserDropdown = () => {
       >
         <Avatar
           ref={anchorRef}
-          alt='مصطفی معماری'
+          alt={user?.username}
           src='/images/avatars/1.png'
           onClick={handleDropdownOpen}
           className='cursor-pointer bs-[38px] is-[38px]'
@@ -107,12 +113,12 @@ const UserDropdown = () => {
               <ClickAwayListener onClickAway={e => handleDropdownClose(e as MouseEvent | TouchEvent)}>
                 <MenuList>
                   <div className='flex items-center plb-2 pli-6 gap-2' tabIndex={-1}>
-                    <Avatar alt='مصطفی معماری' src='/images/avatars/1.png' />
+                    <Avatar alt={user?.username} src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        مصطفی معماری
+                        {user?.username}
                       </Typography>
-                      <Typography variant='caption'>mostafa@memari.com</Typography>
+                      <Typography variant='caption'>{user?.mobile}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />

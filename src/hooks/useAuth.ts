@@ -86,17 +86,14 @@ export const useAuth = () => {
   const signOutMutation = useMutation({
     mutationFn: signOut,
     onSuccess: () => {
-      logout()
       showToast({ type: 'success', message: 'خروج با موفقیت انجام شد' })
-
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.AUTH] })
+      logout()
       queryClient.clear()
     },
-    onError: error => {
-      const { status } = JSON.parse(error.message)
-      const errorMessage = handleError('signOut', status)
-
-      showToast({ type: 'error', message: errorMessage })
+    onError: () => {
+      showToast({ type: 'success', message: 'خروج با موفقیت انجام شد' })
+      logout()
+      queryClient.clear()
     }
   })
 

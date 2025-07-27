@@ -5,15 +5,7 @@ import 'server-only'
 import { api } from '../index'
 import { API_ROUTES } from '../routes'
 import type { ApiResponse } from '@/types/api-response.type'
-import type {
-  signupData,
-  signupCoachData,
-  signupStudentData,
-  refreshTokenData,
-  forgetPasswordData,
-  verifyOtpData,
-  AuthTokens
-} from '@/types/auth.type'
+import type { signupData, verifyOtpData, AuthTokens } from '@/types/auth.type'
 import { COOKIE_NAMES } from '@/libs/constants'
 import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
 import { deleteCookie, getCookie, setCookie } from '@/utils/cookie'
@@ -32,23 +24,19 @@ export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthToken
   if (res?.status === 200 && res?.data?.accessToken && res?.data?.refreshToken) {
     const { accessToken, refreshToken }: AuthTokens = res.data
 
-    const commonOptions = {
-      httpOnly: true
-    }
-
     if (rememberMe) {
       await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
-        ...commonOptions,
+        httpOnly: true,
         expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
       })
 
       await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, {
-        ...commonOptions,
+        httpOnly: true,
         expires: new Date(Date.now() + Number(process.env.REFRESH_TOKEN_EXPIRE_TIME) * 1000)
       })
     } else {
-      await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, commonOptions)
-      await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, commonOptions)
+      await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, { httpOnly: true })
+      await setCookie(COOKIE_NAMES.REFRESH_TOKEN, refreshToken, { httpOnly: true })
     }
   }
 
@@ -64,14 +52,16 @@ export const signUp = async (data: signupData): Promise<ApiResponse<{}>> => {
   })
 }
 
-export const signInStudent = async (data: signupStudentData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
+export const signInStudent = async (data: {
+  nationalCode: string
+}): Promise<ApiResponse<AuthTokens & { user: User }>> => {
   return api(API_ROUTES.AUTH.SIGN_IN_STUDENT, {
     method: 'POST',
     body: data
   })
 }
 
-export const signInCoach = async (data: signupCoachData): Promise<ApiResponse<AuthTokens>> => {
+export const signInCoach = async (data: { nationalCode: string }): Promise<ApiResponse<AuthTokens>> => {
   return api(API_ROUTES.AUTH.SIGN_IN_COACH, {
     method: 'POST',
     body: data
@@ -79,7 +69,18 @@ export const signInCoach = async (data: signupCoachData): Promise<ApiResponse<Au
 }
 
 export const signOut = async (): Promise<ApiResponse<null>> => {
+  console.log('Sign out called at', new Date().toLocaleTimeString('fa-IR'))
+
   const refreshToken = await getCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
+  if (!refreshToken) {
+    return {
+      data: null,
+      error: true,
+      message: 'No refresh token found during sign out',
+      status: 401
+    }
+  }
 
   const res = await api(API_ROUTES.AUTH.SIGN_OUT, {
     method: 'POST',
@@ -94,14 +95,27 @@ export const signOut = async (): Promise<ApiResponse<null>> => {
   return res
 }
 
-export const refreshToken = async (data: refreshTokenData): Promise<ApiResponse<AuthTokens>> => {
-  return api(API_ROUTES.AUTH.REFRESH_TOKEN, {
+export const refreshToken = async (): Promise<ApiResponse<AuthTokens>> => {
+  const refreshToken = await getCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
+  const res = await api(API_ROUTES.AUTH.REFRESH_TOKEN, {
     method: 'POST',
-    body: data
+    body: { refreshToken }
   })
+
+  if (res?.status === 200 && res?.data?.accessToken) {
+    const { accessToken }: AuthTokens = res.data
+
+    await setCookie(COOKIE_NAMES.ACCESS_TOKEN, accessToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + Number(process.env.ACCESS_TOKEN_EXPIRE_TIME) * 1000)
+    })
+  }
+
+  return res
 }
 
-export const forgetPassword = async (data: forgetPasswordData): Promise<ApiResponse<null>> => {
+export const forgetPassword = async (data: { mobile: string }): Promise<ApiResponse<null>> => {
   return api(API_ROUTES.AUTH.FORGET_PASSWORD, {
     method: 'POST',
     body: data
