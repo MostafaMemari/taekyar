@@ -2,14 +2,14 @@
 
 import 'server-only'
 
-import type { ApiResponse } from '@/types/api-response.type'
+import type { ApiResponse, GetDataResponse } from '@/types/api-response.type'
 import { api } from '../index'
 import { API_ROUTES } from '../routes'
-import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData, User } from '@/types/apps/user.types'
+import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData, UserType } from '@/types/apps/user.types'
 import { getCookie } from '@/utils/cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
 
-export const getAllUsers = async (query: GetUsersQueryParams): Promise<ApiResponse<any[]>> => {
+export const getAllUsers = async (query?: GetUsersQueryParams): Promise<GetDataResponse<UserType[]>> => {
   return api(API_ROUTES.USER.BASE, {
     method: 'GET',
     query: { query }
@@ -23,7 +23,7 @@ export const searchUsers = async (query: SearchUserQuery): Promise<ApiResponse<a
   })
 }
 
-export const getUserProfile = async (): Promise<ApiResponse<User>> => {
+export const getUserProfile = async (): Promise<ApiResponse<UserType>> => {
   const accessToken = await getCookie(COOKIE_NAMES.ACCESS_TOKEN)
   const refreshToken = await getCookie(COOKIE_NAMES.REFRESH_TOKEN)
 

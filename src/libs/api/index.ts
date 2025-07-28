@@ -30,6 +30,18 @@ export const api = ofetch.create({
       return
     }
 
+    if (response.status === 401 && response._data?.message === 'invalid signature') {
+      await deleteCookie(COOKIE_NAMES.ACCESS_TOKEN)
+      await deleteCookie(COOKIE_NAMES.REFRESH_TOKEN)
+
+      throw new Error(
+        JSON.stringify({
+          status: response.status,
+          message: 'Unauthorized: Invalid token signature'
+        })
+      )
+    }
+
     if (response.status === 401 && response._data?.message === 'jwt expired') {
       try {
         const res = await refreshToken()

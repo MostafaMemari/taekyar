@@ -38,11 +38,10 @@ import type { ColumnDef, FilterFn } from '@tanstack/react-table'
 import type { RankingInfo } from '@tanstack/match-sorter-utils'
 
 import type { ThemeColor } from '@core/types'
-import type { UsersType } from '@/types/apps/userTypes'
+import type { UserType } from '@/types/apps/user.types'
 
 // Component Imports
 import TableFilters from './TableFilters'
-import AddUserDrawer from './AddUserDrawer'
 import OptionMenu from '@core/components/option-menu'
 
 import CustomTextField from '@core/components/mui/TextField'
@@ -64,8 +63,9 @@ declare module '@tanstack/table-core' {
   }
 }
 
-type UsersTypeWithAction = UsersType & {
+type UserTypeWithAction = UserType & {
   action?: string
+  status?: 'active' | 'pending' | 'inactive'
 }
 
 type UserRoleType = {
@@ -123,11 +123,17 @@ const DebouncedInput = ({
 
 // Vars
 const userRoleObj: UserRoleType = {
-  admin: { icon: 'tabler-crown', color: 'error' },
-  author: { icon: 'tabler-device-desktop', color: 'warning' },
-  editor: { icon: 'tabler-edit', color: 'info' },
-  maintainer: { icon: 'tabler-chart-pie', color: 'success' },
-  subscriber: { icon: 'tabler-user', color: 'primary' }
+  SUPER_ADMIN: { icon: 'tabler-shield-check', color: 'error' },
+  ADMIN_CLUB: { icon: 'tabler-building-community', color: 'primary' },
+  COACH: { icon: 'tabler-whistle', color: 'warning' },
+  STUDENT: { icon: 'tabler-user', color: 'success' }
+}
+
+const userRoleLabels: Record<keyof UserRoleType, string> = {
+  SUPER_ADMIN: 'مدیر کل',
+  ADMIN_CLUB: 'مدیر باشگاه',
+  COACH: 'مربی',
+  STUDENT: 'هنرجو'
 }
 
 const userStatusObj: UserStatusType = {
@@ -137,17 +143,16 @@ const userStatusObj: UserStatusType = {
 }
 
 // Column Definitions
-const columnHelper = createColumnHelper<UsersTypeWithAction>()
+const columnHelper = createColumnHelper<UserTypeWithAction>()
 
-const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
+const UserListTable = ({ tableData }: { tableData?: UserType[] }) => {
   // States
-  const [addUserOpen, setAddUserOpen] = useState(false)
   const [rowSelection, setRowSelection] = useState({})
   const [data, setData] = useState(...[tableData])
   const [filteredData, setFilteredData] = useState(data)
   const [globalFilter, setGlobalFilter] = useState('')
 
-  const columns = useMemo<ColumnDef<UsersTypeWithAction, any>[]>(
+  const columns = useMemo<ColumnDef<UserTypeWithAction, any>[]>(
     () => [
       {
         id: 'select',
@@ -171,14 +176,14 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
           />
         )
       },
-      columnHelper.accessor('fullName', {
-        header: 'User',
+      columnHelper.accessor('username', {
+        header: 'کاربر',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ avatar: row.original.avatar, fullName: row.original.fullName })}
+            {getAvatar({ username: row.original.username })}
             <div className='flex flex-col'>
               <Typography color='text.primary' className='font-medium'>
-                {row.original.fullName}
+                {row.original.username}
               </Typography>
               <Typography variant='body2'>{row.original.username}</Typography>
             </div>
@@ -186,7 +191,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
         )
       }),
       columnHelper.accessor('role', {
-        header: 'Role',
+        header: 'نقش',
         cell: ({ row }) => (
           <div className='flex items-center gap-2'>
             <Icon
@@ -194,39 +199,29 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
               sx={{ color: `var(--mui-palette-${userRoleObj[row.original.role].color}-main)` }}
             />
             <Typography className='capitalize' color='text.primary'>
-              {row.original.role}
+              {userRoleLabels[row.original.role]}
             </Typography>
           </div>
         )
       }),
-      columnHelper.accessor('currentPlan', {
-        header: 'Plan',
+      columnHelper.accessor('mobile', {
+        header: 'شماره موبایل',
         cell: ({ row }) => (
           <Typography className='capitalize' color='text.primary'>
-            {row.original.currentPlan}
+            {row.original.mobile}
           </Typography>
         )
       }),
-      columnHelper.accessor('billing', {
-        header: 'Billing',
-        cell: ({ row }) => <Typography>{row.original.billing}</Typography>
-      }),
       columnHelper.accessor('status', {
-        header: 'Status',
-        cell: ({ row }) => (
+        header: 'وضعیت',
+        cell: () => (
           <div className='flex items-center gap-3'>
-            <Chip
-              variant='tonal'
-              label={row.original.status}
-              size='small'
-              color={userStatusObj[row.original.status]}
-              className='capitalize'
-            />
+            <Chip variant='tonal' label='معتبر' size='small' color={userStatusObj['active']} className='capitalize' />
           </div>
         )
       }),
       columnHelper.accessor('action', {
-        header: 'Action',
+        header: 'عملیات',
         cell: ({ row }) => (
           <div className='flex items-center'>
             <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
@@ -263,7 +258,7 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
   )
 
   const table = useReactTable({
-    data: filteredData as UsersType[],
+    data: filteredData as UserType[],
     columns,
     filterFns: {
       fuzzy: fuzzyFilter
@@ -291,14 +286,10 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
     getFacetedMinMaxValues: getFacetedMinMaxValues()
   })
 
-  const getAvatar = (params: Pick<UsersType, 'avatar' | 'fullName'>) => {
-    const { avatar, fullName } = params
+  const getAvatar = (params: Pick<UserType, 'username'>) => {
+    const { username } = params
 
-    if (avatar) {
-      return <CustomAvatar src={avatar} size={34} />
-    } else {
-      return <CustomAvatar size={34}>{getInitials(fullName as string)}</CustomAvatar>
-    }
+    return <CustomAvatar size={34}>{getInitials(username as string)}</CustomAvatar>
   }
 
   return (
@@ -307,6 +298,17 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
         <CardHeader title='Filters' className='pbe-4' />
         <TableFilters setData={setFilteredData} tableData={data} />
         <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
+          <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
+            <Button variant='contained' startIcon={<i className='tabler-plus' />} className='max-sm:is-full'>
+              افزون کاربر جدید
+            </Button>
+            <DebouncedInput
+              value={globalFilter ?? ''}
+              onChange={value => setGlobalFilter(String(value))}
+              placeholder='جستجوی کاربر'
+              className='max-sm:is-full'
+            />
+          </div>
           <CustomTextField
             select
             value={table.getState().pagination.pageSize}
@@ -317,30 +319,6 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
             <MenuItem value='25'>25</MenuItem>
             <MenuItem value='50'>50</MenuItem>
           </CustomTextField>
-          <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
-            <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='Search User'
-              className='max-sm:is-full'
-            />
-            <Button
-              color='secondary'
-              variant='tonal'
-              startIcon={<i className='tabler-upload' />}
-              className='max-sm:is-full'
-            >
-              Export
-            </Button>
-            <Button
-              variant='contained'
-              startIcon={<i className='tabler-plus' />}
-              onClick={() => setAddUserOpen(!addUserOpen)}
-              className='max-sm:is-full'
-            >
-              Add New User
-            </Button>
-          </div>
         </div>
         <div className='overflow-x-auto'>
           <table className={tableStyles.table}>
@@ -407,12 +385,6 @@ const UserListTable = ({ tableData }: { tableData?: UsersType[] }) => {
           }}
         />
       </Card>
-      <AddUserDrawer
-        open={addUserOpen}
-        handleClose={() => setAddUserOpen(!addUserOpen)}
-        userData={data}
-        setData={setData}
-      />
     </>
   )
 }

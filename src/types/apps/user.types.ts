@@ -14,7 +14,7 @@ export enum UserRole {
   SUPER_ADMIN = 'SUPER_ADMIN'
 }
 
-export interface User {
+export interface UserType {
   id: number
   username: string
   role: UserRole

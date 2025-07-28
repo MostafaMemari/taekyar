@@ -10,10 +10,10 @@ import { COOKIE_NAMES } from '@/libs/constants'
 import type { LoginFormData } from '@/libs/schemas/aurh/login.schema'
 import { deleteCookie, getCookie, setCookie } from '@/utils/cookie'
 import { getUserProfile } from './user.api'
-import type { User } from '@/types/apps/user.types'
+import type { UserType } from '@/types/apps/user.types'
 import type { ResetPasswordFormData } from '@/libs/schemas/aurh/resetPassword.schema'
 
-export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
+export const signIn = async (data: LoginFormData): Promise<ApiResponse<AuthTokens & { user: UserType }>> => {
   const { rememberMe, ...cleanData } = data
 
   const res = await api(API_ROUTES.AUTH.SIGN_IN, {
@@ -54,7 +54,7 @@ export const signUp = async (data: signupData): Promise<ApiResponse<{}>> => {
 
 export const signInStudent = async (data: {
   nationalCode: string
-}): Promise<ApiResponse<AuthTokens & { user: User }>> => {
+}): Promise<ApiResponse<AuthTokens & { user: UserType }>> => {
   return api(API_ROUTES.AUTH.SIGN_IN_STUDENT, {
     method: 'POST',
     body: data
@@ -128,7 +128,7 @@ export const resetPassword = async (data: ResetPasswordFormData): Promise<ApiRes
     body: data
   })
 
-export const verifyOtp = async (data: verifyOtpData): Promise<ApiResponse<AuthTokens & { user: User }>> => {
+export const verifyOtp = async (data: verifyOtpData): Promise<ApiResponse<AuthTokens & { user: UserType }>> => {
   const res = await api(API_ROUTES.AUTH.VERIFY_OTP, {
     method: 'POST',
     body: data
