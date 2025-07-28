@@ -75,7 +75,7 @@ function ResetPasswordForm({ mobile }: ResetPasswordFormProps) {
           <CustomTextField
             {...field}
             fullWidth
-            label='رمز عبور'
+            label='رمز عبور جدید'
             placeholder='············'
             type={isPasswordShown ? 'text' : 'password'}
             error={!!errors.newPassword}
