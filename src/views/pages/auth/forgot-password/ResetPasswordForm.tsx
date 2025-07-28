@@ -14,7 +14,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import CustomTextField from '@core/components/mui/TextField'
 import Link from '@components/Link'
 import DirectionalIcon from '@/components/DirectionalIcon'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/libs/schemas/aurh/resetPassword.schema'
 
 interface ResetPasswordFormProps {
@@ -22,7 +22,7 @@ interface ResetPasswordFormProps {
 }
 
 function ResetPasswordForm({ mobile }: ResetPasswordFormProps) {
-  const { resetPassword, resetPasswordStatus } = useAuth()
+  const { resetPassword, resetPasswordStatus } = useAuthMutations()
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const router = useRouter()
 

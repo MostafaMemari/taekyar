@@ -20,7 +20,7 @@ import styles from '@/libs/styles/inputOtp.module.css'
 // Messages
 import { showToast } from '@/utils/showToast'
 
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 import { useOtpTimer } from '@/hooks/useOtpTimer'
 import type { RegisterFormData } from '@/libs/schemas/aurh/register.schema'
 
@@ -48,7 +48,7 @@ interface OtpStepProps {
 }
 
 const OtpStep = ({ registerData, onBack }: OtpStepProps) => {
-  const { verifyOtp, verifyOtpStatus, signUp, signUpStatus } = useAuth()
+  const { verifyOtp, verifyOtpStatus, signUp, signUpStatus } = useAuthMutations()
 
   const [otp, setOtp] = useState('')
   const [isError, setIsError] = useState(false)

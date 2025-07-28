@@ -15,7 +15,7 @@ import CustomTextField from '@core/components/mui/TextField'
 
 import Link from '@components/Link'
 import DirectionalIcon from '@/components/DirectionalIcon'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 
 interface ForgotPasswordFormProps {
   onSubmitSuccess: () => void
@@ -23,7 +23,7 @@ interface ForgotPasswordFormProps {
 }
 
 function ForgotPasswordForm({ onSubmitSuccess, onMobileChange }: ForgotPasswordFormProps) {
-  const { forgetPassword, forgetPasswordStatus } = useAuth()
+  const { forgetPassword, forgetPasswordStatus } = useAuthMutations()
 
   const {
     control,

@@ -23,7 +23,7 @@ import Link from '@components/Link'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Hook Imports
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 import { loginSchema, type LoginFormData } from '@/libs/schemas/aurh/login.schema'
 
 const LoginForm = () => {
@@ -32,7 +32,7 @@ const LoginForm = () => {
 
   // Hooks
   const router = useRouter()
-  const { signIn, signInStatus } = useAuth()
+  const { signIn, signInStatus } = useAuthMutations()
 
   const {
     control,

@@ -19,7 +19,7 @@ import Link from '@components/Link'
 import CustomTextField from '@core/components/mui/TextField'
 
 // Hook Imports
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 import { type RegisterFormData, RegisterSchema } from '@/libs/schemas/aurh/register.schema'
 import { showToast } from '@/utils/showToast'
 
@@ -34,7 +34,7 @@ const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormPro
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
   const [agreed, setAgreed] = useState(false)
 
-  const { signUp, signUpStatus } = useAuth()
+  const { signUp, signUpStatus } = useAuthMutations()
 
   const {
     control,

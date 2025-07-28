@@ -5,6 +5,8 @@ export enum COOKIE_NAMES {
 
 export enum QueryKeys {
   AUTH = 'auth',
+  USER_PROFILE = 'user-profile',
+  USERS = 'users',
   USER_NOTIFICATIONS = 'user-notifications',
   SENT_NOTIFICATIONS = 'sent-notifications',
   STUDENTS = 'students',

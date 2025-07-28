@@ -16,7 +16,7 @@ import { QueryKeys } from '@/libs/constants'
 import { showToast } from '@/utils/showToast'
 import { useAuthStore } from '@/store'
 
-export const useAuth = () => {
+export const useAuthMutations = () => {
   const queryClient = useQueryClient()
   const { loginSuccess, loginStart, loginFailure, logout } = useAuthStore()
 

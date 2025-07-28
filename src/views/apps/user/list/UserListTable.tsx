@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 // Next Imports
 import Link from 'next/link'
@@ -11,7 +11,6 @@ import Card from '@mui/material/Card'
 import CardHeader from '@mui/material/CardHeader'
 import Button from '@mui/material/Button'
 import Typography from '@mui/material/Typography'
-import Chip from '@mui/material/Chip'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
@@ -32,27 +31,30 @@ import {
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
   getPaginationRowModel,
-  getSortedRowModel
+  getSortedRowModel,
+  type ColumnDef,
+  type FilterFn
 } from '@tanstack/react-table'
-import type { ColumnDef, FilterFn } from '@tanstack/react-table'
 import type { RankingInfo } from '@tanstack/match-sorter-utils'
 
-import type { ThemeColor } from '@core/types'
-import type { UserType } from '@/types/apps/user.types'
-
 // Component Imports
-import TableFilters from './TableFilters'
 import OptionMenu from '@core/components/option-menu'
-
 import CustomTextField from '@core/components/mui/TextField'
 import CustomAvatar from '@core/components/mui/Avatar'
 
 // Util Imports
 import { getInitials } from '@/utils/getInitials'
 
+// Hook Imports
+
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
+import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
+import { useAllUsers, useUserMutations } from '@/hooks/apps/useUser'
+
+// Styled Components
+const Icon = styled('i')({})
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -65,60 +67,10 @@ declare module '@tanstack/table-core' {
 
 type UserTypeWithAction = UserType & {
   action?: string
-  status?: 'active' | 'pending' | 'inactive'
 }
 
 type UserRoleType = {
   [key: string]: { icon: string; color: string }
-}
-
-type UserStatusType = {
-  [key: string]: ThemeColor
-}
-
-// Styled Components
-const Icon = styled('i')({})
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  // Store the itemRank info
-  addMeta({
-    itemRank
-  })
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed
-}
-
-const DebouncedInput = ({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number
-  onChange: (value: string | number) => void
-  debounce?: number
-} & Omit<TextFieldProps, 'onChange'>) => {
-  // States
-  const [value, setValue] = useState(initialValue)
-
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
-
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
-
-  return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
 }
 
 // Vars
@@ -136,43 +88,99 @@ const userRoleLabels: Record<keyof UserRoleType, string> = {
   STUDENT: 'هنرجو'
 }
 
-const userStatusObj: UserStatusType = {
-  active: 'success',
-  pending: 'warning',
-  inactive: 'secondary'
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  const itemRank = rankItem(row.getValue(columnId), value)
+
+  addMeta({ itemRank })
+
+  return itemRank.passed
 }
 
-// Column Definitions
+const DebouncedInput = ({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: {
+  value: string | number
+  onChange: (value: string | number) => void
+  debounce?: number
+} & Omit<TextFieldProps, 'onChange'>) => {
+  const [value, setValue] = useState(initialValue)
+
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (value !== initialValue) {
+        onChange(value)
+      }
+    }, debounce)
+
+    return () => clearTimeout(timeout)
+  }, [value, onChange, debounce, initialValue])
+
+  return <CustomTextField {...props} value={value} onChange={e => setValue(e.target.value)} />
+}
+
 const columnHelper = createColumnHelper<UserTypeWithAction>()
 
-const UserListTable = ({ tableData }: { tableData?: UserType[] }) => {
-  // States
-  const [rowSelection, setRowSelection] = useState({})
-  const [data, setData] = useState(...[tableData])
-  const [filteredData, setFilteredData] = useState(data)
+const UserListTable = () => {
+  // State for query params
+  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
   const [globalFilter, setGlobalFilter] = useState('')
+  const [rowSelection, setRowSelection] = useState({})
 
+  console.log(globalFilter, rowSelection)
+
+  // Fetch users using useUser hook
+  const {
+    data: getAllUsers,
+    isLoading: isLoadingUsers,
+    isError: isErrorUsers,
+    refetch: refetchUsers
+  } = useAllUsers(queryParams)
+
+  const { deleteUserById } = useUserMutations()
+
+  const userData = getAllUsers?.data.items || []
+
+  const handleDeleteUserById = (userId: string | number) => {
+    deleteUserById(userId, {
+      onSuccess: () => {
+        refetchUsers()
+      }
+    })
+  }
+
+  const pager = getAllUsers?.data.pager || {
+    totalCount: 0,
+    totalPages: 1,
+    currentPage: 1,
+    hasNextPage: false,
+    hasPreviousPage: false
+  }
+
+  // Columns
   const columns = useMemo<ColumnDef<UserTypeWithAction, any>[]>(
     () => [
       {
         id: 'select',
         header: ({ table }) => (
           <Checkbox
-            {...{
-              checked: table.getIsAllRowsSelected(),
-              indeterminate: table.getIsSomeRowsSelected(),
-              onChange: table.getToggleAllRowsSelectedHandler()
-            }}
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
           />
         ),
         cell: ({ row }) => (
           <Checkbox
-            {...{
-              checked: row.getIsSelected(),
-              disabled: !row.getCanSelect(),
-              indeterminate: row.getIsSomeSelected(),
-              onChange: row.getToggleSelectedHandler()
-            }}
+            checked={row.getIsSelected()}
+            disabled={!row.getCanSelect()}
+            indeterminate={row.getIsSomeSelected()}
+            onChange={row.getToggleSelectedHandler()}
           />
         )
       },
@@ -180,12 +188,13 @@ const UserListTable = ({ tableData }: { tableData?: UserType[] }) => {
         header: 'کاربر',
         cell: ({ row }) => (
           <div className='flex items-center gap-4'>
-            {getAvatar({ username: row.original.username })}
+            <CustomAvatar size={34}>{getInitials(row.original.username)}</CustomAvatar>
             <div className='flex flex-col'>
               <Typography color='text.primary' className='font-medium'>
                 {row.original.username}
               </Typography>
-              <Typography variant='body2'>{row.original.username}</Typography>
+              <Typography variant='body2'>{row.original.mobile}</Typography>{' '}
+              {/* Replaced duplicate username with mobile */}
             </div>
           </div>
         )
@@ -206,29 +215,23 @@ const UserListTable = ({ tableData }: { tableData?: UserType[] }) => {
       }),
       columnHelper.accessor('mobile', {
         header: 'شماره موبایل',
+        cell: ({ row }) => <Typography color='text.primary'>{row.original.mobile}</Typography>
+      }),
+      columnHelper.accessor('createdAt', {
+        header: 'تاریخ ایجاد',
         cell: ({ row }) => (
-          <Typography className='capitalize' color='text.primary'>
-            {row.original.mobile}
-          </Typography>
+          <Typography color='text.primary'>{new Date(row.original.createdAt).toLocaleDateString('fa-IR')}</Typography>
         )
       }),
-      columnHelper.accessor('status', {
-        header: 'وضعیت',
-        cell: () => (
-          <div className='flex items-center gap-3'>
-            <Chip variant='tonal' label='معتبر' size='small' color={userStatusObj['active']} className='capitalize' />
-          </div>
-        )
-      }),
-      columnHelper.accessor('action', {
+      columnHelper.accessor('action' as any, {
         header: 'عملیات',
         cell: ({ row }) => (
           <div className='flex items-center'>
-            <IconButton onClick={() => setData(data?.filter(product => product.id !== row.original.id))}>
+            <IconButton onClick={() => handleDeleteUserById(row.original.id)}>
               <i className='tabler-trash text-textSecondary' />
             </IconButton>
             <IconButton>
-              <Link href='/apps/user/view' className='flex'>
+              <Link href={`/apps/user/view/${row.original.id}`} className='flex'>
                 <i className='tabler-eye text-textSecondary' />
               </Link>
             </IconButton>
@@ -253,139 +256,151 @@ const UserListTable = ({ tableData }: { tableData?: UserType[] }) => {
         enableSorting: false
       })
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, filteredData]
+    []
   )
 
+  // Table setup
   const table = useReactTable({
-    data: filteredData as UserType[],
+    data: userData,
     columns,
-    filterFns: {
-      fuzzy: fuzzyFilter
-    },
+    filterFns: { fuzzy: fuzzyFilter },
     state: {
       rowSelection,
-      globalFilter
-    },
-    initialState: {
+      globalFilter,
       pagination: {
-        pageSize: 10
+        pageIndex: pager.currentPage - 1,
+        pageSize: queryParams.take || 10
       }
     },
-    enableRowSelection: true, //enable row selection for all rows
-    // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
+    enableRowSelection: true,
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
     onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues()
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    manualPagination: true,
+    pageCount: pager.totalPages
   })
 
-  const getAvatar = (params: Pick<UserType, 'username'>) => {
-    const { username } = params
+  // Handle pagination and search
+  const handlePageChange = (_: any, page: number) => {
+    setQueryParams(prev => ({ ...prev, page: page + 1 }))
+    table.setPageIndex(page)
+  }
 
-    return <CustomAvatar size={34}>{getInitials(username as string)}</CustomAvatar>
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newSize = Number(e.target.value)
+
+    setQueryParams(prev => ({ ...prev, take: newSize }))
+    table.setPageSize(newSize)
+  }
+
+  const handleSearch = (value: string) => {
+    if (value === globalFilter) return
+    setGlobalFilter(value)
+    setQueryParams(prev => ({ ...prev, search: value }))
   }
 
   return (
-    <>
-      <Card>
-        <CardHeader title='Filters' className='pbe-4' />
-        <TableFilters setData={setFilteredData} tableData={data} />
-        <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
-          <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
-            <Button variant='contained' startIcon={<i className='tabler-plus' />} className='max-sm:is-full'>
-              افزون کاربر جدید
-            </Button>
-            <DebouncedInput
-              value={globalFilter ?? ''}
-              onChange={value => setGlobalFilter(String(value))}
-              placeholder='جستجوی کاربر'
-              className='max-sm:is-full'
-            />
-          </div>
-          <CustomTextField
-            select
-            value={table.getState().pagination.pageSize}
-            onChange={e => table.setPageSize(Number(e.target.value))}
-            className='max-sm:is-full sm:is-[70px]'
-          >
-            <MenuItem value='10'>10</MenuItem>
-            <MenuItem value='25'>25</MenuItem>
-            <MenuItem value='50'>50</MenuItem>
-          </CustomTextField>
+    <Card>
+      <CardHeader title='لیست کاربران' />
+      <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
+        <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
+          <Button variant='contained' startIcon={<i className='tabler-plus' />} className='max-sm:is-full'>
+            افزودن کاربر جدید
+          </Button>
+          <DebouncedInput
+            value={globalFilter ?? ''}
+            onChange={value => handleSearch(String(value))}
+            placeholder='جستجوی کاربر'
+            className='max-sm:is-full'
+          />
         </div>
-        <div className='overflow-x-auto'>
-          <table className={tableStyles.table}>
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id}>
-                      {header.isPlaceholder ? null : (
-                        <>
-                          <div
-                            className={classnames({
-                              'flex items-center': header.column.getIsSorted(),
-                              'cursor-pointer select-none': header.column.getCanSort()
-                            })}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {{
-                              asc: <i className='tabler-chevron-up text-xl' />,
-                              desc: <i className='tabler-chevron-down text-xl' />
-                            }[header.column.getIsSorted() as 'asc' | 'desc'] ?? null}
-                          </div>
-                        </>
-                      )}
-                    </th>
+        <CustomTextField
+          select
+          value={table.getState().pagination.pageSize}
+          onChange={handlePageSizeChange}
+          className='max-sm:is-full sm:is-[70px]'
+        >
+          <MenuItem value='10'>10</MenuItem>
+          <MenuItem value='25'>25</MenuItem>
+          <MenuItem value='50'>50</MenuItem>
+        </CustomTextField>
+      </div>
+      <div className='overflow-x-auto'>
+        <table className={tableStyles.table}>
+          <thead>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder ? null : (
+                      <div
+                        className={classnames({
+                          'flex items-center': header.column.getIsSorted(),
+                          'cursor-pointer select-none': header.column.getCanSort()
+                        })}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {{
+                          asc: <i className='tabler-chevron-up text-xl' />,
+                          desc: <i className='tabler-chevron-down text-xl' />
+                        }[header.column.getIsSorted() as 'asc' | 'desc'] ?? null}
+                      </div>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {isLoadingUsers ? (
+              <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                  <Typography>در حال بارگذاری...</Typography>
+                </td>
+              </tr>
+            ) : isErrorUsers ? (
+              <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                  <Typography color='error'>خطا در بارگذاری داده‌ها</Typography>
+                </td>
+              </tr>
+            ) : userData.length === 0 ? (
+              <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
+                  <Typography>داده‌ای موجود نیست</Typography>
+                </td>
+              </tr>
+            ) : (
+              table.getRowModel().rows.map(row => (
+                <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                   ))}
                 </tr>
-              ))}
-            </thead>
-            {table.getFilteredRowModel().rows.length === 0 ? (
-              <tbody>
-                <tr>
-                  <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
-                    No data available
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {table
-                  .getRowModel()
-                  .rows.slice(0, table.getState().pagination.pageSize)
-                  .map(row => {
-                    return (
-                      <tr key={row.id} className={classnames({ selected: row.getIsSelected() })}>
-                        {row.getVisibleCells().map(cell => (
-                          <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-                        ))}
-                      </tr>
-                    )
-                  })}
-              </tbody>
+              ))
             )}
-          </table>
-        </div>
-        <TablePagination
-          component={() => <TablePaginationComponent table={table} />}
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={table.getState().pagination.pageSize}
-          page={table.getState().pagination.pageIndex}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
-          }}
-        />
-      </Card>
-    </>
+          </tbody>
+        </table>
+      </div>
+      <TablePagination
+        component={() => <TablePaginationComponent table={table} />}
+        count={pager.totalCount}
+        rowsPerPage={table.getState().pagination.pageSize}
+        page={table.getState().pagination.pageIndex}
+        onPageChange={handlePageChange}
+        rowsPerPageOptions={[10, 25, 50]}
+        labelRowsPerPage='تعداد در صفحه:'
+        labelDisplayedRows={({ from, to, count }) => `${from}–${to} از ${count}`}
+      />
+    </Card>
   )
 }
 

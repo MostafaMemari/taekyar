@@ -23,7 +23,7 @@ import Button from '@mui/material/Button'
 
 // Hook Imports
 import { useSettings } from '@core/hooks/useSettings'
-import { useAuth } from '@/hooks/useAuth'
+import { useAuthMutations } from '@/hooks/apps/useAuth'
 import { useAuthStore } from '@/store'
 
 // Styled component for badge content
@@ -46,7 +46,7 @@ const UserDropdown = () => {
   // Hooks
   const router = useRouter()
   const { settings } = useSettings()
-  const { signOut, signOutStatus } = useAuth()
+  const { signOut, signOutStatus } = useAuthMutations()
   const { user } = useAuthStore()
 
   const handleDropdownOpen = () => {
