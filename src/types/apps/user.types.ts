@@ -24,8 +24,8 @@ export interface UserType {
   updatedAt: Date
 }
 
-export interface GetUsersQueryParams {
-  username?: string
+export interface GetUsersQueryParams extends PaginationQuery {
+  search?: string
   role?: UserRole
   mobile?: string
   lastPasswordChange?: string
@@ -33,10 +33,6 @@ export interface GetUsersQueryParams {
   endDate?: string
   sortBy?: DateSort | 'username' | 'mobile'
   sortDirection?: SortDirection
-}
-
-export interface SearchUserQuery extends PaginationQuery {
-  query: string
 }
 
 export interface UpdateUserProfileData {

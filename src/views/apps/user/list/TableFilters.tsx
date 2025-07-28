@@ -14,7 +14,7 @@ import CustomTextField from '@core/components/mui/TextField'
 
 const TableFilters = ({ setData, tableData }: { setData: (data: UserType[]) => void; tableData?: UserType[] }) => {
   // States
-  const [role, setRole] = useState<UserType['role']>(UserRole.SUPER_ADMIN)
+  const [role, setRole] = useState<UserType['role']>()
 
   useEffect(() => {
     const filteredData = tableData?.filter(user => {
