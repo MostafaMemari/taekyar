@@ -15,7 +15,7 @@ import type {
   MenuItemProps as HorizontalMenuItemProps
 } from '@menu/horizontal-menu'
 import type { MenuItemExactMatchUrlProps } from '@menu/types'
-import type { UserRole } from './user.types'
+import type { UserRole } from './apps/user.types'
 
 // Vertical Menu Data
 export type VerticalMenuItemDataType = Omit<

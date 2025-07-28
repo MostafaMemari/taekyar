@@ -1,6 +1,6 @@
 // Type Imports
 import type { HorizontalMenuDataType } from '@/types/menu.types'
-import { UserRole } from '@/types/user.types'
+import { UserRole } from '@/types/apps/user.types'
 
 const horizontalMenuData = (): HorizontalMenuDataType[] => [
   {

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import type { UserState } from '@/types/user.types'
+import type { UserState } from '@/types/apps/user.types'
 import { getUserProfile } from '@/libs/api/endpoints/user.api'
 
 interface AuthStore {

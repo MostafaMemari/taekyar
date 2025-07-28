@@ -1,4 +1,4 @@
-import type { PaginationQuery, SortDirection, DateSort } from './common.type'
+import type { PaginationQuery, SortDirection, DateSort } from '../common.type'
 
 export interface UserState {
   id: number

@@ -19,7 +19,7 @@ import type {
 import { SubMenu as HorizontalSubMenu, MenuItem as HorizontalMenuItem } from '@menu/horizontal-menu'
 import { SubMenu as VerticalSubMenu, MenuItem as VerticalMenuItem, MenuSection } from '@menu/vertical-menu'
 import CustomChip from '@core/components/mui/Chip'
-import { UserRole } from '@/types/user.types'
+import { UserRole } from '@/types/apps/user.types'
 
 const filterSuperAdminItems = (items: VerticalMenuDataType[], role: UserRole): VerticalMenuDataType[] => {
   return items

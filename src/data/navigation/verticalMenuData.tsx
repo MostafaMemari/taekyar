@@ -1,30 +1,22 @@
 // Type Imports
 import type { VerticalMenuDataType } from '@/types/menu.types'
-import { UserRole } from '@/types/user.types'
+import { UserRole } from '@/types/apps/user.types'
 
 const verticalMenuData = (): VerticalMenuDataType[] => [
   {
     label: 'داشبورد',
     href: '/home',
-    icon: 'tabler-smart-home',
-    roles: [UserRole.COACH, UserRole.SUPER_ADMIN]
+    icon: 'tabler-smart-home'
   },
   {
     label: 'کاربران',
     icon: 'tabler-users',
-    roles: [UserRole.COACH],
+    roles: [UserRole.SUPER_ADMIN],
     children: [
       {
-        label: 'لیست کاربران',
-        href: '/users'
-      },
-      {
-        label: 'جستجوی کاربران',
-        href: '/users/search'
-      },
-      {
-        label: 'پروفایل من',
-        href: '/profile'
+        label: 'لیست',
+        href: '/user/list',
+        roles: [UserRole.SUPER_ADMIN]
       }
     ]
   },
@@ -36,12 +28,10 @@ const verticalMenuData = (): VerticalMenuDataType[] => [
   {
     label: 'هنرجویان',
     icon: 'tabler-user',
-    roles: [UserRole.COACH, UserRole.SUPER_ADMIN],
     children: [
       {
         label: 'لیست هنرجویان',
-        href: '/students',
-        roles: [UserRole.COACH, UserRole.SUPER_ADMIN]
+        href: '/students'
       },
       {
         label: 'ثبت هنرجوی جدید',

@@ -2,7 +2,7 @@
 import type { Metadata } from 'next'
 
 // Component Imports
-import Login from '@/views/auth/login/Login'
+import Login from '@/views/pages/auth/login/Login'
 
 export const metadata: Metadata = {
   title: 'Login',

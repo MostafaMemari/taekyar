@@ -250,13 +250,7 @@ const TextFieldStyled = styled(TextField)<TextFieldProps>(({ theme }) => ({
   }
 }))
 
-interface CustomTextFieldProps extends Omit<TextFieldProps, 'slotProps'> {
-  slotProps?: TextFieldProps['slotProps'] & {
-    inputLabel?: Partial<InputLabelProps>
-  }
-}
-
-const CustomTextField = forwardRef<HTMLInputElement, CustomTextFieldProps>((props, ref) => {
+const CustomTextField = forwardRef((props: TextFieldProps, ref) => {
   const { size = 'small', slotProps, ...rest } = props
 
   return (
@@ -267,7 +261,7 @@ const CustomTextField = forwardRef<HTMLInputElement, CustomTextFieldProps>((prop
       variant='filled'
       slotProps={{
         ...slotProps,
-        inputLabel: { ...slotProps?.inputLabel, shrink: true }
+        inputLabel: { ...slotProps?.inputLabel, shrink: true } as InputLabelProps
       }}
     />
   )

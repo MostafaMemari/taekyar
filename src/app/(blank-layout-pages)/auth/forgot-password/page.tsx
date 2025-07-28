@@ -1,4 +1,4 @@
-import ForgotPassword from '@/views/auth/forgot-password/ForgotPassword'
+import ForgotPassword from '@/views/pages/auth/forgot-password/ForgotPassword'
 
 const ForgotPasswordPage = () => {
   return <ForgotPassword />

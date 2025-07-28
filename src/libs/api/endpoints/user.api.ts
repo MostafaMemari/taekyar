@@ -5,7 +5,7 @@ import 'server-only'
 import type { ApiResponse } from '@/types/api-response.type'
 import { api } from '../index'
 import { API_ROUTES } from '../routes'
-import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData, User } from '@/types/user.types'
+import type { GetUsersQueryParams, SearchUserQuery, UpdateUserProfileData, User } from '@/types/apps/user.types'
 import { getCookie } from '@/utils/cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
 
