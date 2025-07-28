@@ -19,6 +19,7 @@ export const API_ROUTES = {
     BASE: '/user',
     SEARCH: '/user/search',
     PROFILE: '/user/profile',
+    ROLE_COUNTS: '/user/role-counts',
     DETAIL: (id: string | number) => `/user/${id}`
   },
 

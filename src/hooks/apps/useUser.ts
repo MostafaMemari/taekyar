@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
+import type { GetUsersQueryParams, RoleCountType, UserType } from '@/types/apps/user.types'
 import type { ApiResponse, GetDataResponse } from '@/types/api-response.type'
 import { QueryKeys } from '@/libs/constants'
 import {
   deleteUserById,
   getAllUsers,
+  getRoleCounts,
   getUserById,
   getUserProfile,
   updateUserProfile
@@ -17,6 +18,12 @@ export const useAllUsers = (queryParams?: GetUsersQueryParams) =>
     queryKey: [QueryKeys.USERS, queryParams],
     queryFn: () => getAllUsers(queryParams),
     enabled: !!queryParams
+  })
+
+export const useRoleCounts = () =>
+  useQuery<ApiResponse<RoleCountType[]>, Error>({
+    queryKey: [QueryKeys.USER_ROLE_COUNTS],
+    queryFn: getRoleCounts
   })
 
 export const useUserProfile = () =>

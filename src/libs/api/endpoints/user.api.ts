@@ -5,7 +5,7 @@ import 'server-only'
 import type { ApiResponse, GetDataResponse } from '@/types/api-response.type'
 import { api } from '../index'
 import { API_ROUTES } from '../routes'
-import type { GetUsersQueryParams, UpdateUserProfileData, UserType } from '@/types/apps/user.types'
+import type { GetUsersQueryParams, RoleCountType, UpdateUserProfileData, UserType } from '@/types/apps/user.types'
 import { getCookie } from '@/utils/cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
 
@@ -13,6 +13,12 @@ export const getAllUsers = async (query?: GetUsersQueryParams): Promise<GetDataR
   return api(API_ROUTES.USER.BASE, {
     method: 'GET',
     params: { ...query }
+  })
+}
+
+export const getRoleCounts = async (): Promise<ApiResponse<RoleCountType[]>> => {
+  return api(API_ROUTES.USER.ROLE_COUNTS, {
+    method: 'GET'
   })
 }
 

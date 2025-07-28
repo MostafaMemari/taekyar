@@ -24,6 +24,11 @@ export interface UserType {
   updatedAt: Date
 }
 
+export interface RoleCountType {
+  role: UserRole
+  count: number
+}
+
 export interface GetUsersQueryParams extends PaginationQuery {
   search?: string
   role?: UserRole
