@@ -14,7 +14,6 @@ import Typography from '@mui/material/Typography'
 import Checkbox from '@mui/material/Checkbox'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-import TablePagination from '@mui/material/TablePagination'
 import type { TextFieldProps } from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 
@@ -132,8 +131,6 @@ const UserListTable = () => {
   const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
   const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState({})
-
-  console.log(globalFilter, rowSelection)
 
   // Fetch users using useUser hook
   const {
@@ -256,7 +253,7 @@ const UserListTable = () => {
         enableSorting: false
       })
     ],
-    []
+    [deleteUserById, refetchUsers]
   )
 
   // Table setup
@@ -289,15 +286,16 @@ const UserListTable = () => {
 
   // Handle pagination and search
   const handlePageChange = (_: any, page: number) => {
-    setQueryParams(prev => ({ ...prev, page: page + 1 }))
-    table.setPageIndex(page)
+    setQueryParams(prev => ({ ...prev, page }))
+    table.setPageIndex(page - 1)
   }
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSize = Number(e.target.value)
 
-    setQueryParams(prev => ({ ...prev, take: newSize }))
+    setQueryParams(prev => ({ ...prev, take: newSize, page: 1 }))
     table.setPageSize(newSize)
+    table.setPageIndex(0)
   }
 
   const handleSearch = (value: string) => {
@@ -390,15 +388,11 @@ const UserListTable = () => {
           </tbody>
         </table>
       </div>
-      <TablePagination
-        component={() => <TablePaginationComponent table={table} />}
-        count={pager.totalCount}
-        rowsPerPage={table.getState().pagination.pageSize}
-        page={table.getState().pagination.pageIndex}
+      <TablePaginationComponent
+        table={table}
+        totalCount={pager.totalCount}
+        totalPages={pager.totalPages}
         onPageChange={handlePageChange}
-        rowsPerPageOptions={[10, 25, 50]}
-        labelRowsPerPage='تعداد در صفحه:'
-        labelDisplayedRows={({ from, to, count }) => `${from}–${to} از ${count}`}
       />
     </Card>
   )
