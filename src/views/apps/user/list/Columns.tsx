@@ -20,32 +20,10 @@ import CustomAvatar from '@core/components/mui/Avatar'
 import { getInitials } from '@/utils/getInitials'
 
 // Types
-import type { UserType } from '@/types/apps/user.types'
-
-type UserTypeWithAction = UserType & {
-  action?: string
-}
-
-type UserRoleType = {
-  [key: string]: { icon: string; color: string }
-}
+import type { UserTypeWithAction } from '@/types/apps/user.types'
+import { userRoleLabels, userRoleObj } from '@/types/apps/user.types'
 
 const Icon = styled('i')({})
-
-// Vars
-const userRoleObj: UserRoleType = {
-  SUPER_ADMIN: { icon: 'tabler-shield-check', color: 'error' },
-  ADMIN_CLUB: { icon: 'tabler-building-community', color: 'primary' },
-  COACH: { icon: 'tabler-run', color: 'warning' },
-  STUDENT: { icon: 'tabler-user', color: 'success' }
-}
-
-const userRoleLabels: Record<keyof UserRoleType, string> = {
-  SUPER_ADMIN: 'مدیر کل',
-  ADMIN_CLUB: 'مدیر باشگاه',
-  COACH: 'مربی',
-  STUDENT: 'هنرجو'
-}
 
 const columnHelper = createColumnHelper<UserTypeWithAction>()
 
@@ -82,6 +60,7 @@ export const columns = (
   }),
   columnHelper.accessor('mobile', {
     header: 'شماره موبایل',
+    enableSorting: false,
     cell: ({ row }) => <Typography color='text.primary'>{row.original.mobile}</Typography>
   }),
   columnHelper.accessor('createdAt', {
