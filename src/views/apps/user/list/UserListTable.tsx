@@ -16,40 +16,24 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  getFilteredRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFacetedMinMaxValues,
   getPaginationRowModel,
   getSortedRowModel,
-  type FilterFn,
   type SortingState
 } from '@tanstack/react-table'
-import type { RankingInfo } from '@tanstack/match-sorter-utils'
-
-// Component Imports
-import { rankItem } from '@tanstack/match-sorter-utils'
 
 import CustomTextField from '@core/components/mui/TextField'
 
-// Hook Imports
+import type { UserType, GetUsersQueryParams } from '@/types/apps/user.types'
 
 // Style Imports
 import tableStyles from '@core/styles/table.module.css'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import type { GetUsersQueryParams } from '@/types/apps/user.types'
 import { useAllUsers, useUserMutations } from '@/hooks/apps/useUser'
 import DebouncedInput from '../../../../components/inputs/DebouncedInput'
 import { columns } from './Columns'
-
-declare module '@tanstack/table-core' {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
 
 const UserListTable = () => {
   // State for query params
@@ -94,19 +78,10 @@ const UserListTable = () => {
     hasPreviousPage: false
   }
 
-  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    const itemRank = rankItem(row.getValue(columnId), value)
-
-    addMeta({ itemRank })
-
-    return itemRank.passed
-  }
-
   // Table setup
   const table = useReactTable({
     data: userData,
     columns: columns(handleDeleteUserById, refetchUsers),
-    filterFns: { fuzzy: fuzzyFilter },
     state: {
       rowSelection,
       globalFilter,
@@ -117,12 +92,10 @@ const UserListTable = () => {
       }
     },
     enableRowSelection: true,
-    globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
@@ -235,7 +208,7 @@ const UserListTable = () => {
           </tbody>
         </table>
       </div>
-      <TablePaginationComponent
+      <TablePaginationComponent<UserType>
         table={table}
         totalCount={pager.totalCount}
         totalPages={pager.totalPages}

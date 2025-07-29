@@ -1,21 +1,19 @@
 // MUI Imports
 import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
+import type { Table } from '@tanstack/table-core'
 
 // Third Party Imports
-import type { useReactTable } from '@tanstack/react-table'
+// import type { useReactTable } from '@tanstack/react-table'
 
-const TablePaginationComponent = ({
-  table,
-  totalCount,
-  totalPages,
-  onPageChange
-}: {
-  table: ReturnType<typeof useReactTable>
+interface TablePaginationProps<T> {
+  table: Table<T>
   totalCount: number
   totalPages: number
   onPageChange: (event: React.ChangeEvent<unknown>, page: number) => void
-}) => {
+}
+
+const TablePaginationComponent = <T,>({ table, totalCount, totalPages, onPageChange }: TablePaginationProps<T>) => {
   const pageIndex = table.getState().pagination.pageIndex
   const pageSize = table.getState().pagination.pageSize
 

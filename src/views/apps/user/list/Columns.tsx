@@ -10,8 +10,7 @@ import { styled } from '@mui/material/styles'
 
 // Third-party Imports
 import { createColumnHelper } from '@tanstack/react-table'
-import type { ColumnDef, FilterFn } from '@tanstack/react-table'
-import type { RankingInfo } from '@tanstack/match-sorter-utils'
+import type { ColumnDef } from '@tanstack/react-table'
 
 // Component Imports
 import OptionMenu from '@core/components/option-menu'
@@ -46,15 +45,6 @@ const userRoleLabels: Record<keyof UserRoleType, string> = {
   ADMIN_CLUB: 'مدیر باشگاه',
   COACH: 'مربی',
   STUDENT: 'هنرجو'
-}
-
-declare module '@tanstack/table-core' {
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
 }
 
 const columnHelper = createColumnHelper<UserTypeWithAction>()
