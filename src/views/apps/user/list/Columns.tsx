@@ -22,6 +22,7 @@ import { getInitials } from '@/utils/getInitials'
 // Types
 import type { UserTypeWithAction } from '@/types/apps/user.types'
 import { userRoleLabels, userRoleObj } from '@/types/apps/user.types'
+import RemoveUserDialog from './RemoveUserDialog'
 
 const Icon = styled('i')({})
 
@@ -73,9 +74,7 @@ export const columns = (
     header: 'عملیات',
     cell: ({ row }) => (
       <div className='flex items-center'>
-        <IconButton onClick={() => deleteUserById(row.original.id, { onSuccess: () => refetchUsers() })}>
-          <i className='tabler-trash text-textSecondary' />
-        </IconButton>
+        <RemoveUserDialog onRemove={() => deleteUserById(row.original.id, { onSuccess: () => refetchUsers() })} />
         <IconButton>
           <Link href={`/apps/user/view/${row.original.id}`} className='flex'>
             <i className='tabler-eye text-textSecondary' />
