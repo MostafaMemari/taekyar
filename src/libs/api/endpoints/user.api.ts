@@ -10,6 +10,8 @@ import { getCookie } from '@/utils/cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
 
 export const getAllUsers = async (query?: GetUsersQueryParams): Promise<GetDataResponse<UserType[]>> => {
+  console.log(query)
+
   return api(API_ROUTES.USER.BASE, {
     method: 'GET',
     params: { ...query }

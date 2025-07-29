@@ -8,10 +8,8 @@ import { useRoleCounts } from '@/hooks/apps/useUser'
 import type { UserDataType } from '@/components/card-statistics/HorizontalWithSubtitle'
 import HorizontalWithSubtitle from '@/components/card-statistics/HorizontalWithSubtitle'
 
-// ترتیب مورد نظر برای نقش‌ها
 const roleOrder = ['SUPER_ADMIN', 'ADMIN_CLUB', 'COACH', 'STUDENT']
 
-// تابع برای تبدیل داده‌های API به فرمت کارت‌ها
 const getRoleCardData = (role: string, count: number): UserDataType => {
   const roleConfig: Record<string, { title: string; avatarIcon: string; avatarColor: string; subtitle: string }> = {
     SUPER_ADMIN: {
@@ -78,7 +76,7 @@ const UserListCards = () => {
       ) || []
 
   if (isLoading) {
-    return <div>در حال بارگذاری...</div>
+    return <div className=' flex justify-center items-center h-full'>در حال بارگذاری...</div>
   }
 
   return (

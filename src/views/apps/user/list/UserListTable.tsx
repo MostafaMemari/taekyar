@@ -1,7 +1,7 @@
 'use client'
 
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // MUI Imports
 import Card from '@mui/material/Card'
@@ -22,11 +22,14 @@ import {
   getFacetedMinMaxValues,
   getPaginationRowModel,
   getSortedRowModel,
-  type FilterFn
+  type FilterFn,
+  type SortingState
 } from '@tanstack/react-table'
 import type { RankingInfo } from '@tanstack/match-sorter-utils'
 
 // Component Imports
+import { rankItem } from '@tanstack/match-sorter-utils'
+
 import CustomTextField from '@core/components/mui/TextField'
 
 // Hook Imports
@@ -37,7 +40,7 @@ import TablePaginationComponent from '@/components/TablePaginationComponent'
 import type { GetUsersQueryParams } from '@/types/apps/user.types'
 import { useAllUsers, useUserMutations } from '@/hooks/apps/useUser'
 import DebouncedInput from '../../../../components/inputs/DebouncedInput'
-import { columns, fuzzyFilter } from './Columns'
+import { columns } from './Columns'
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -53,6 +56,15 @@ const UserListTable = () => {
   const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
   const [globalFilter, setGlobalFilter] = useState('')
   const [rowSelection, setRowSelection] = useState({})
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  useEffect(() => {
+    setQueryParams(prev => ({
+      ...prev,
+      sortBy: sorting[0]?.id as GetUsersQueryParams['sortBy'],
+      sortDirection: sorting[0]?.desc ? 'desc' : 'asc'
+    }))
+  }, [sorting])
 
   // Fetch users using useUser hook
   const {
@@ -82,7 +94,13 @@ const UserListTable = () => {
     hasPreviousPage: false
   }
 
-  // Columns
+  const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    addMeta({ itemRank })
+
+    return itemRank.passed
+  }
 
   // Table setup
   const table = useReactTable({
@@ -92,6 +110,7 @@ const UserListTable = () => {
     state: {
       rowSelection,
       globalFilter,
+      sorting,
       pagination: {
         pageIndex: pager.currentPage - 1,
         pageSize: queryParams.take || 10
@@ -101,6 +120,7 @@ const UserListTable = () => {
     globalFilterFn: fuzzyFilter,
     onRowSelectionChange: setRowSelection,
     onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -112,7 +132,6 @@ const UserListTable = () => {
     pageCount: pager.totalPages
   })
 
-  // Handle pagination and search
   const handlePageChange = (_: any, page: number) => {
     setQueryParams(prev => ({ ...prev, page }))
     table.setPageIndex(page - 1)

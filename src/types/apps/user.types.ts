@@ -36,7 +36,7 @@ export interface GetUsersQueryParams extends PaginationQuery {
   lastPasswordChange?: string
   startDate?: string
   endDate?: string
-  sortBy?: DateSort | 'username' | 'mobile'
+  sortBy?: DateSort | 'username' | 'mobile' | 'role'
   sortDirection?: SortDirection
 }
 

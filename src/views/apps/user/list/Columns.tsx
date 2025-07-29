@@ -12,7 +12,6 @@ import { styled } from '@mui/material/styles'
 import { createColumnHelper } from '@tanstack/react-table'
 import type { ColumnDef, FilterFn } from '@tanstack/react-table'
 import type { RankingInfo } from '@tanstack/match-sorter-utils'
-import { rankItem } from '@tanstack/match-sorter-utils'
 
 // Component Imports
 import OptionMenu from '@core/components/option-menu'
@@ -56,14 +55,6 @@ declare module '@tanstack/table-core' {
   interface FilterMeta {
     itemRank: RankingInfo
   }
-}
-
-export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  addMeta({ itemRank })
-
-  return itemRank.passed
 }
 
 const columnHelper = createColumnHelper<UserTypeWithAction>()
