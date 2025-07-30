@@ -12,8 +12,9 @@ interface RemoveUserDialogProps {
 }
 
 function RemoveUserDialog({ userId }: RemoveUserDialogProps) {
-  const { deleteUserById, deleteUserByIdStatus } = useUserMutations()
   const [open, setOpen] = useState<boolean>(false)
+
+  const { deleteUserById, deleteUserByIdStatus } = useUserMutations()
 
   useEffect(() => {
     if (deleteUserByIdStatus === 'success' || deleteUserByIdStatus === 'error') {
@@ -26,21 +27,22 @@ function RemoveUserDialog({ userId }: RemoveUserDialogProps) {
   }
 
   return (
-    <ConfirmDialog
-      title='حذف کاربر'
-      contentText='آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟'
-      confirmText='حذف'
-      cancelText='لغو'
-      colorConfirm='error'
-      isLoadingConfirm={deleteUserByIdStatus === 'pending'}
-      open={open}
-      setOpen={setOpen}
-      onConfirm={handleDeleteUserById}
-    >
-      <IconButton>
+    <>
+      <IconButton onClick={() => setOpen(true)} className='text-textSecondary hover:text-error'>
         <i className='tabler-trash text-textSecondary' />
       </IconButton>
-    </ConfirmDialog>
+
+      <ConfirmDialog
+        title='حذف کاربر'
+        contentText='آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟'
+        confirmText='حذف'
+        cancelText='لغو'
+        isLoadingConfirm={deleteUserByIdStatus === 'pending'}
+        open={open}
+        setOpen={setOpen}
+        onConfirm={handleDeleteUserById}
+      />
+    </>
   )
 }
 

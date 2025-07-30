@@ -26,14 +26,7 @@ const AddUserDrawer = () => {
         افزودن کاربر جدید
       </Button>
 
-      <Drawer
-        open={open}
-        anchor='right'
-        variant='temporary'
-        onClose={handleClose}
-        ModalProps={{ keepMounted: true }}
-        sx={{ '& .MuiDrawer-paper': { width: { xs: 300, sm: 400 } } }}
-      >
+      <Drawer open={open} anchor='bottom' variant='temporary' onClose={handleClose} ModalProps={{ keepMounted: true }}>
         <div className='flex items-center justify-between plb-5 pli-6'>
           <Typography variant='h5'>ثبت کاربر جدید</Typography>
           <IconButton size='small' onClick={handleClose}>
@@ -42,7 +35,7 @@ const AddUserDrawer = () => {
         </div>
         <Divider />
         <div>
-          <AddUserForm onSubmitSuccess={handleClose} />
+          <AddUserForm onSubmitSuccess={handleClose} classNamesForm='flex flex-col gap-6 p-6' />
         </div>
       </Drawer>
     </>

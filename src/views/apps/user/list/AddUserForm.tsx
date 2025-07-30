@@ -21,9 +21,10 @@ import LoadingButton from '@/components/base/LoadingButton'
 
 interface AddUserFormProps {
   onSubmitSuccess: () => void
+  classNamesForm?: string
 }
 
-function AddUserForm({ onSubmitSuccess }: AddUserFormProps) {
+function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
@@ -65,7 +66,7 @@ function AddUserForm({ onSubmitSuccess }: AddUserFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(data => onSubmit(data))} className='flex flex-col gap-6 p-6'>
+    <form onSubmit={handleSubmit(data => onSubmit(data))} className={classNamesForm}>
       <Controller
         name='username'
         control={control}

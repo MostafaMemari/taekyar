@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactElement, ReactNode, Ref } from 'react'
+import type { ReactElement, Ref } from 'react'
 import { forwardRef } from 'react'
 
 import Button from '@mui/material/Button'
@@ -30,7 +30,6 @@ interface ConfirmDialogProps {
   open: boolean
   setOpen: (open: boolean) => void
   onConfirm: () => void | Promise<void>
-  children?: ReactNode
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
@@ -39,24 +38,18 @@ const ConfirmDialog = ({
   contentText,
   confirmText = 'تایید',
   cancelText = 'انصراف',
-  colorConfirm = 'error',
+  colorConfirm = 'primary',
   colorCancel = 'secondary',
   isLoadingConfirm = false,
   open,
   setOpen,
   onConfirm,
-  children,
   maxWidth = 'sm'
 }: ConfirmDialogProps) => {
   const handleClose = () => setOpen(false)
-  const handleOpen = () => setOpen(true)
 
   return (
     <>
-      <span onClick={handleOpen} className='cursor-pointer inline-block'>
-        {children || <Button variant='outlined'>باز کردن دیالوگ تأیید</Button>}
-      </span>
-
       <Dialog
         open={open}
         onClose={handleClose}
