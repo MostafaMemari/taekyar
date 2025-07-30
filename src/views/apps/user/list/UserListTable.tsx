@@ -14,12 +14,15 @@ import {
   type SortingState
 } from '@tanstack/react-table'
 
+import { useMediaQuery } from '@mui/material'
+
 import UserListHeader from './UserListHeader'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
 import { useAllUsers } from '@/hooks/apps/useUser'
 import { columns } from './Columns'
 import UserListBody from './UserListBody'
+import UserCard from './UserCard'
 
 const UserListTable = () => {
   const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
@@ -89,22 +92,54 @@ const UserListTable = () => {
     setQueryParams(prev => ({ ...prev, search: value }))
   }
 
+  const isMobile = useMediaQuery('(max-width: 1024px)')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) return null
+
   return (
-    <Card>
-      <UserListHeader
-        globalFilter={globalFilter}
-        onSearch={handleSearch}
-        pageSize={table.getState().pagination.pageSize}
-        onPageSizeChange={handlePageSizeChange}
-      />
-      <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
-      <TablePaginationComponent<UserType>
-        table={table}
-        totalCount={pager.totalCount}
-        totalPages={pager.totalPages}
-        onPageChange={handlePageChange}
-      />
-    </Card>
+    <>
+      {isMobile ? (
+        <>
+          <div className='grid grid-cols-1 gap-4'>
+            <div className='flex flex-col gap-4'>
+              {userData.map(user => (
+                <UserCard key={user.id} user={user} />
+              ))}
+            </div>
+            <Card>
+              <TablePaginationComponent<UserType>
+                table={table}
+                totalCount={pager.totalCount}
+                totalPages={pager.totalPages}
+                onPageChange={handlePageChange}
+              />
+            </Card>
+          </div>
+        </>
+      ) : (
+        <Card>
+          <UserListHeader
+            globalFilter={globalFilter}
+            onSearch={handleSearch}
+            pageSize={table.getState().pagination.pageSize}
+            onPageSizeChange={handlePageSizeChange}
+          />
+
+          <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
+          <TablePaginationComponent<UserType>
+            table={table}
+            totalCount={pager.totalCount}
+            totalPages={pager.totalPages}
+            onPageChange={handlePageChange}
+          />
+        </Card>
+      )}
+    </>
   )
 }
 

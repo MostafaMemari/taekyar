@@ -4,6 +4,7 @@ import type { GetUsersQueryParams, RoleCountType, UserType } from '@/types/apps/
 import type { ApiResponse, GetDataResponse } from '@/types/api-response.type'
 import { QueryKeys } from '@/libs/constants'
 import {
+  addUser,
   deleteUserById,
   getAllUsers,
   getRoleCounts,
@@ -42,6 +43,19 @@ export const useUserById = (userId?: string | number) =>
 export const useUserMutations = () => {
   const queryClient = useQueryClient()
 
+  const CreateUserProfileMutation = useMutation({
+    mutationFn: addUser,
+    onSuccess: () => {
+      showToast({ type: 'success', message: 'کاربر  با موفقیت ایجاد شد' })
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.USERS] })
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to create user'
+
+      showToast({ type: 'error', message })
+    }
+  })
+
   const UpdateUserProfileMutation = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: () => {
@@ -69,9 +83,11 @@ export const useUserMutations = () => {
   })
 
   return {
+    addUser: CreateUserProfileMutation.mutate,
     updateUserProfile: UpdateUserProfileMutation.mutate,
     deleteUserById: DeleteUserByIdMutation.mutate,
     updateUserProfileStatus: UpdateUserProfileMutation.status,
-    deleteUserByIdStatus: DeleteUserByIdMutation.status
+    deleteUserByIdStatus: DeleteUserByIdMutation.status,
+    addUserStatus: CreateUserProfileMutation.status
   }
 }

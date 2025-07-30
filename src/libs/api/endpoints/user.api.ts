@@ -8,10 +8,16 @@ import { API_ROUTES } from '../routes'
 import type { GetUsersQueryParams, RoleCountType, UpdateUserProfileData, UserType } from '@/types/apps/user.types'
 import { getCookie } from '@/utils/cookie'
 import { COOKIE_NAMES } from '@/libs/constants'
+import type { AddUserFormData } from '@/libs/schemas/user/user.schema'
+
+export const addUser = async (data?: AddUserFormData): Promise<GetDataResponse<UserType[]>> => {
+  return api(API_ROUTES.USER.BASE, {
+    method: 'POST',
+    body: data
+  })
+}
 
 export const getAllUsers = async (query?: GetUsersQueryParams): Promise<GetDataResponse<UserType[]>> => {
-  console.log(query)
-
   return api(API_ROUTES.USER.BASE, {
     method: 'GET',
     params: { ...query }

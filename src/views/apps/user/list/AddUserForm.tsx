@@ -1,78 +1,71 @@
-'use client'
-
 // React Imports
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 // MUI Imports
-import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import Button from '@mui/material/Button'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import Checkbox from '@mui/material/Checkbox'
+import MenuItem from '@mui/material/MenuItem'
 
 // Third-party Imports
-import { useForm, Controller } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
+
+// Component Imports
+import { Button, IconButton, InputAdornment } from '@mui/material'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import Link from '@components/Link'
 import CustomTextField from '@core/components/mui/TextField'
+import { AddUserSchema, type AddUserFormData } from '@/libs/schemas/user/user.schema'
 
-// Hook Imports
-import { useAuthMutations } from '@/hooks/apps/useAuth'
-import { type RegisterFormData, RegisterSchema } from '@/libs/schemas/aurh/register.schema'
-import { showToast } from '@/utils/showToast'
+import { useUserMutations } from '@/hooks/apps/useUser'
+import { UserRole } from '@/types/apps/user.types'
+import LoadingButton from '@/components/base/LoadingButton'
 
-interface RegisterFormProps {
+interface AddUserFormProps {
   onSubmitSuccess: () => void
-  onChangeRegisterData: (data: RegisterFormData) => void
 }
 
-const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormProps) => {
+function AddUserForm({ onSubmitSuccess }: AddUserFormProps) {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
-  const [agreed, setAgreed] = useState(false)
 
-  const { signUp, signUpStatus } = useAuthMutations()
+  const { addUser, addUserStatus } = useUserMutations()
 
   const {
     control,
     handleSubmit,
+    reset: resetForm,
     formState: { errors }
-  } = useForm<RegisterFormData>({
-    resolver: zodResolver(RegisterSchema),
+  } = useForm<AddUserFormData>({
+    resolver: zodResolver(AddUserSchema),
     defaultValues: {
       username: '',
       mobile: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      role: UserRole.ADMIN_CLUB
     }
   })
+
+  const handleReset = () => {
+    resetForm()
+
+    // handleClose()
+  }
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
-  const onSubmit = (data: RegisterFormData) => {
-    if (!agreed) {
-      showToast({
-        type: 'error',
-        message: 'موافقت با شرایط الزامی است'
-      })
-
-      return
-    }
-
-    signUp(data, {
+  const onSubmit = (data: AddUserFormData) => {
+    addUser(data, {
       onSuccess: () => {
         onSubmitSuccess()
-        onChangeRegisterData(data)
+        resetForm()
       }
     })
   }
 
   return (
-    <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6'>
+    <form onSubmit={handleSubmit(data => onSubmit(data))} className='flex flex-col gap-6 p-6'>
       <Controller
         name='username'
         control={control}
@@ -88,6 +81,7 @@ const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormPro
           />
         )}
       />
+
       <Controller
         name='mobile'
         control={control}
@@ -102,6 +96,26 @@ const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormPro
           />
         )}
       />
+
+      <Controller
+        name='role'
+        control={control}
+        rules={{ required: true }}
+        render={({ field }) => (
+          <CustomTextField
+            select
+            fullWidth
+            id='select-role'
+            label='نقش کاربر'
+            {...field}
+            error={!!errors.role}
+            helperText={errors.role?.message}
+          >
+            <MenuItem value={UserRole.ADMIN_CLUB}>مدیر باشگاه</MenuItem>
+          </CustomTextField>
+        )}
+      />
+
       <Controller
         name='password'
         control={control}
@@ -158,29 +172,17 @@ const RegisterForm = ({ onSubmitSuccess, onChangeRegisterData }: RegisterFormPro
           />
         )}
       />
-      <FormControlLabel
-        control={<Checkbox checked={agreed} onChange={e => setAgreed(e.target.checked)} />}
-        label={
-          <>
-            <span>با </span>
-            <Link className='text-primary' href='/' onClick={e => e.preventDefault()}>
-              سیاست حفظ حریم خصوصی و شرایط
-            </Link>
-            <span> موافقم</span>
-          </>
-        }
-      />
-      <Button fullWidth variant='contained' type='submit' disabled={signUpStatus === 'pending'}>
-        {signUpStatus === 'pending' ? 'در حال ثبت‌نام...' : 'ثبت‌نام'}
-      </Button>
-      <div className='flex justify-center items-center flex-wrap gap-2'>
-        <Typography>قبلاً حساب کاربری دارید؟</Typography>
-        <Typography component={Link} href='/auth/login' color='primary.main'>
-          وارد شوید
-        </Typography>
+      <div className='flex items-center gap-4'>
+        <LoadingButton isLoading={addUserStatus === 'pending'} variant='contained' type='submit'>
+          تایید
+        </LoadingButton>
+
+        <Button variant='tonal' color='error' type='reset' onClick={() => handleReset()}>
+          انصراف
+        </Button>
       </div>
     </form>
   )
 }
 
-export default RegisterForm
+export default AddUserForm

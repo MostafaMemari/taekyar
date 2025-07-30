@@ -49,10 +49,11 @@ const ConfirmDialog = ({
   maxWidth = 'sm'
 }: ConfirmDialogProps) => {
   const handleClose = () => setOpen(false)
+  const handleOpen = () => setOpen(true)
 
   return (
     <>
-      <span onClick={() => setOpen(true)} className='cursor-pointer inline-block'>
+      <span onClick={handleOpen} className='cursor-pointer inline-block'>
         {children || <Button variant='outlined'>باز کردن دیالوگ تأیید</Button>}
       </span>
 
