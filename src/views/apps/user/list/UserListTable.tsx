@@ -17,7 +17,7 @@ import {
 import UserListHeader from './UserListHeader'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
-import { useAllUsers, useUserMutations } from '@/hooks/apps/useUser'
+import { useAllUsers } from '@/hooks/apps/useUser'
 import { columns } from './Columns'
 import UserListBody from './UserListBody'
 
@@ -35,14 +35,7 @@ const UserListTable = () => {
     }))
   }, [sorting])
 
-  const {
-    data: getAllUsers,
-    isLoading: isLoadingUsers,
-    isError: isErrorUsers,
-    refetch: refetchUsers
-  } = useAllUsers(queryParams)
-
-  const { deleteUserById } = useUserMutations()
+  const { data: getAllUsers, isLoading: isLoadingUsers, isError: isErrorUsers } = useAllUsers(queryParams)
 
   const userData = getAllUsers?.data.items || []
 
@@ -54,18 +47,9 @@ const UserListTable = () => {
     hasPreviousPage: false
   }
 
-  const handleDeleteUserById = (userId: string | number, options: { onSuccess: () => void }) => {
-    deleteUserById(userId, {
-      onSuccess: () => {
-        refetchUsers()
-        options.onSuccess()
-      }
-    })
-  }
-
   const table = useReactTable({
     data: userData,
-    columns: columns(handleDeleteUserById, refetchUsers),
+    columns: columns(),
     state: {
       rowSelection,
       globalFilter,

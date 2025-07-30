@@ -1,16 +1,30 @@
 'use client'
 
-import React from 'react'
+import { useState, useEffect } from 'react'
 
 import { IconButton } from '@mui/material'
 
-import ConfirmDialog from '@/@core/components/dialogs/transitions/ConfirmDialog'
+import ConfirmDialog from '@/components/dialogs/transitions/ConfirmDialog'
+import { useUserMutations } from '@/hooks/apps/useUser'
 
 interface RemoveUserDialogProps {
-  onRemove: () => void
+  userId: number
 }
 
-function RemoveUserDialog({ onRemove }: RemoveUserDialogProps) {
+function RemoveUserDialog({ userId }: RemoveUserDialogProps) {
+  const { deleteUserById, deleteUserByIdStatus } = useUserMutations()
+  const [open, setOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (deleteUserByIdStatus === 'success' || deleteUserByIdStatus === 'error') {
+      setOpen(false)
+    }
+  }, [deleteUserByIdStatus])
+
+  const handleDeleteUserById = async () => {
+    deleteUserById(userId)
+  }
+
   return (
     <ConfirmDialog
       title='حذف کاربر'
@@ -18,7 +32,10 @@ function RemoveUserDialog({ onRemove }: RemoveUserDialogProps) {
       confirmText='حذف'
       cancelText='لغو'
       colorConfirm='error'
-      onConfirm={onRemove}
+      isLoadingConfirm={deleteUserByIdStatus === 'pending'}
+      open={open}
+      setOpen={setOpen}
+      onConfirm={handleDeleteUserById}
     >
       <IconButton>
         <i className='tabler-trash text-textSecondary' />

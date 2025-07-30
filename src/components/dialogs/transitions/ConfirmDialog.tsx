@@ -1,10 +1,8 @@
 'use client'
 
-// React Imports
-import { forwardRef, useState } from 'react'
 import type { ReactElement, ReactNode, Ref } from 'react'
+import { forwardRef } from 'react'
 
-// MUI Imports
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
@@ -13,52 +11,56 @@ import DialogActions from '@mui/material/DialogActions'
 import DialogContentText from '@mui/material/DialogContentText'
 import Slide from '@mui/material/Slide'
 import type { SlideProps } from '@mui/material/Slide'
+import type { ButtonProps } from '@mui/material/Button'
 
-const Transition = forwardRef(function Transition(
-  props: SlideProps & { children?: ReactElement<any, any> },
-  ref: Ref<unknown>
-) {
+import LoadingButton from '@/components/base/LoadingButton'
+
+const Transition = forwardRef(function Transition(props: SlideProps & { children?: ReactElement }, ref: Ref<unknown>) {
   return <Slide direction='up' ref={ref} {...props} />
 })
 
 interface ConfirmDialogProps {
-  onConfirm: () => void
   title?: string
-  children?: ReactNode
   contentText?: string
   confirmText?: string
   cancelText?: string
-  colorConfirm?: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success'
-  colorCancel?: 'primary' | 'secondary' | 'error' | 'warning'
-  defaultMaxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  colorConfirm?: ButtonProps['color']
+  colorCancel?: ButtonProps['color']
+  isLoadingConfirm?: boolean
+  open: boolean
+  setOpen: (open: boolean) => void
+  onConfirm: () => void | Promise<void>
+  children?: ReactNode
+  maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
 const ConfirmDialog = ({
   title,
-  children,
+  contentText,
   confirmText = 'تایید',
   cancelText = 'انصراف',
-  contentText,
-  colorConfirm = 'primary',
+  colorConfirm = 'error',
   colorCancel = 'secondary',
-  onConfirm
+  isLoadingConfirm = false,
+  open,
+  setOpen,
+  onConfirm,
+  children,
+  maxWidth = 'sm'
 }: ConfirmDialogProps) => {
-  const [open, setOpen] = useState<boolean>(false)
-
-  const handleClickOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
   return (
     <>
-      <span onClick={handleClickOpen} className='cursor-pointer inline-block'>
-        {children || <Button variant='outlined'>باز کردن دیالوگ تایید</Button>}
+      <span onClick={() => setOpen(true)} className='cursor-pointer inline-block'>
+        {children || <Button variant='outlined'>باز کردن دیالوگ تأیید</Button>}
       </span>
 
       <Dialog
         open={open}
-        keepMounted
         onClose={handleClose}
         TransitionComponent={Transition}
+        maxWidth={maxWidth}
         aria-labelledby='alert-dialog-slide-title'
         aria-describedby='alert-dialog-slide-description'
       >
@@ -71,18 +73,13 @@ const ConfirmDialog = ({
         )}
 
         <DialogActions className='dialog-actions-dense'>
-          <Button onClick={handleClose} color={colorCancel}>
+          <Button onClick={handleClose} color={colorCancel} disabled={isLoadingConfirm}>
             {cancelText}
           </Button>
-          <Button
-            onClick={() => {
-              onConfirm()
-              handleClose()
-            }}
-            color={colorConfirm}
-          >
+
+          <LoadingButton onClick={onConfirm} isLoading={isLoadingConfirm} color={colorConfirm} variant='contained'>
             {confirmText}
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </Dialog>
     </>

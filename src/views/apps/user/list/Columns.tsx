@@ -28,10 +28,7 @@ const Icon = styled('i')({})
 
 const columnHelper = createColumnHelper<UserTypeWithAction>()
 
-export const columns = (
-  deleteUserById: (userId: string | number, options: { onSuccess: () => void }) => void,
-  refetchUsers: () => void
-): ColumnDef<UserTypeWithAction, any>[] => [
+export const columns = (): ColumnDef<UserTypeWithAction, any>[] => [
   columnHelper.accessor('username', {
     header: 'کاربر',
     cell: ({ row }) => (
@@ -74,7 +71,7 @@ export const columns = (
     header: 'عملیات',
     cell: ({ row }) => (
       <div className='flex items-center'>
-        <RemoveUserDialog onRemove={() => deleteUserById(row.original.id, { onSuccess: () => refetchUsers() })} />
+        <RemoveUserDialog userId={row.original.id} />
         <IconButton>
           <Link href={`/apps/user/view/${row.original.id}`} className='flex'>
             <i className='tabler-eye text-textSecondary' />
