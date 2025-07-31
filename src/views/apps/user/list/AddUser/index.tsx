@@ -1,28 +1,22 @@
 import { useState, useRef, useEffect } from 'react'
 
 import Button from '@mui/material/Button'
-import Drawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import Divider from '@mui/material/Divider'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 import { useMediaQuery } from '@mui/material'
 
 import classNames from 'classnames'
 
-import LoadingButton from '@/components/base/LoadingButton'
 import AddUserForm from './AddUserForm'
 import { useUserMutations } from '@/hooks/apps/useUser'
 import { type AddUserFormData } from '@/libs/schemas/user/user.schema'
+import CustomDrawer from '@/components/drawer/CustomDrawer'
+import { CustomDialog } from '@/components/dialog/CustomDialog'
 
 function AddUser() {
   const [open, setOpen] = useState(false)
   const { addUser, addUserStatus } = useUserMutations()
   const isMobile = useMediaQuery('(max-width: 1024px)')
   const formRef = useRef<{ resetForm: () => void }>(null)
+  const isAddUserLoading = addUserStatus === 'pending'
 
   const handleClose = () => setOpen(false)
   const handleOpen = () => setOpen(true)
@@ -41,6 +35,9 @@ function AddUser() {
     }
   }, [addUserStatus])
 
+  const title = 'ثبت کاربر جدید'
+  const confirmText = 'تأیید'
+
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6 p-6' />
 
   return (
@@ -57,69 +54,26 @@ function AddUser() {
       </Button>
 
       {isMobile ? (
-        <Drawer
+        <CustomDrawer
           open={open}
-          anchor='bottom'
-          variant='temporary'
+          title={title}
+          formContent={formContent}
           onClose={handleClose}
-          ModalProps={{ keepMounted: true }}
-        >
-          <div className='flex items-center justify-between plb-5 pli-6'>
-            <Typography variant='h5'>ثبت کاربر جدید</Typography>
-            <IconButton size='small' onClick={handleClose}>
-              <i className='tabler-x text-2xl text-textPrimary' />
-            </IconButton>
-          </div>
-          <Divider />
-          <div>{formContent}</div>
-          <div className='grid grid-cols-2 gap-4 p-6'>
-            <Button
-              onClick={handleClose}
-              color='primary'
-              variant='outlined'
-              className='flex items-center justify-center gap-2'
-            >
-              <i className='tabler-x' />
-              انصراف
-            </Button>
-
-            <LoadingButton
-              isLoading={addUserStatus === 'pending'}
-              variant='contained'
-              type='submit'
-              form='add-user-form'
-              className='flex items-center justify-center gap-2'
-            >
-              <i className='tabler-check' />
-              تأیید
-            </LoadingButton>
-          </div>
-        </Drawer>
+          isLoading={isAddUserLoading}
+          confirmButtonType='submit'
+          formId='add-user-form'
+        />
       ) : (
-        <Dialog
+        <CustomDialog
           open={open}
+          title={title}
+          formContent={formContent}
           onClose={handleClose}
-          maxWidth='xs'
-          fullWidth
-          aria-labelledby='alert-dialog-slide-title'
-          aria-describedby='alert-dialog-slide-description'
-        >
-          <DialogTitle id='alert-dialog-slide-title'>ثبت کاربر جدید</DialogTitle>
-          <DialogContent>{formContent}</DialogContent>
-          <DialogActions className='dialog-actions-dense'>
-            <Button onClick={handleClose} color='secondary'>
-              انصراف
-            </Button>
-            <LoadingButton
-              isLoading={addUserStatus === 'pending'}
-              variant='contained'
-              type='submit'
-              form='add-user-form'
-            >
-              تأیید
-            </LoadingButton>
-          </DialogActions>
-        </Dialog>
+          confirmText={confirmText}
+          isLoading={isAddUserLoading}
+          confirmButtonType='submit'
+          formId='add-user-form'
+        />
       )}
     </>
   )
