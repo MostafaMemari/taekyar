@@ -11,6 +11,8 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import { useMediaQuery } from '@mui/material'
 
+import classNames from 'classnames'
+
 import LoadingButton from '@/components/base/LoadingButton'
 import AddUserForm from './AddUserForm'
 import { useUserMutations } from '@/hooks/apps/useUser'
@@ -47,7 +49,9 @@ function AddUser() {
         onClick={handleOpen}
         variant='contained'
         startIcon={<i className='tabler-plus' />}
-        className='max-sm:is-full'
+        className={classNames(
+          isMobile ? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full shadow-lg px-4 py-3' : 'max-sm:is-full'
+        )}
       >
         افزودن کاربر جدید
       </Button>
@@ -68,16 +72,25 @@ function AddUser() {
           </div>
           <Divider />
           <div>{formContent}</div>
-          <div className='flex justify-end gap-4 p-6'>
-            <Button onClick={handleClose} color='secondary'>
+          <div className='grid grid-cols-2 gap-4 p-6'>
+            <Button
+              onClick={handleClose}
+              color='primary'
+              variant='outlined'
+              className='flex items-center justify-center gap-2'
+            >
+              <i className='tabler-x' />
               انصراف
             </Button>
+
             <LoadingButton
               isLoading={addUserStatus === 'pending'}
               variant='contained'
               type='submit'
               form='add-user-form'
+              className='flex items-center justify-center gap-2'
             >
+              <i className='tabler-check' />
               تأیید
             </LoadingButton>
           </div>

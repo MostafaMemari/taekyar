@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import CustomTextField from '@core/components/mui/TextField'
 import DebouncedInput from '@/components/inputs/DebouncedInput'
-import AddUserDrawer from './AddUser'
+import AddUser from './AddUser'
 
 type Props = {
   globalFilter: string
@@ -21,7 +21,7 @@ const UserListHeader = ({ globalFilter, onSearch, pageSize, onPageSizeChange }: 
       <CardHeader title='لیست کاربران' />
       <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
         <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
-          <AddUserDrawer />
+          <AddUser />
 
           <DebouncedInput
             value={globalFilter ?? ''}

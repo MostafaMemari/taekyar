@@ -23,6 +23,7 @@ import { useAllUsers } from '@/hooks/apps/useUser'
 import { columns } from './Columns'
 import UserListBody from './UserListBody'
 import UserCard from './UserCard'
+import AddUser from './AddUser'
 
 const UserListTable = () => {
   const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
@@ -105,6 +106,7 @@ const UserListTable = () => {
     <>
       {isMobile ? (
         <>
+          <AddUser />
           <div className='grid grid-cols-1 gap-4'>
             <div className='flex flex-col gap-4'>
               {userData.map(user => (
