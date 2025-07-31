@@ -76,17 +76,29 @@ const UserListCards = () => {
       ) || []
 
   if (isLoading) {
-    return <div className=' flex justify-center items-center h-full'>در حال بارگذاری...</div>
+    return <div className='flex justify-center items-center h-full'>در حال بارگذاری...</div>
   }
 
   return (
-    <Grid container spacing={6}>
-      {cardData.map((item, i) => (
-        <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
-          <HorizontalWithSubtitle {...item} />
-        </Grid>
-      ))}
-    </Grid>
+    <>
+      <div className='block md:hidden overflow-x-auto scrollbar-hide'>
+        <div className='flex gap-4 w-max'>
+          {cardData.map((item, i) => (
+            <div key={i} className='min-w-[250px] mb-2'>
+              <HorizontalWithSubtitle {...item} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <Grid container spacing={6} className='hidden md:flex'>
+        {cardData.map((item, i) => (
+          <Grid key={i} size={{ xs: 12, sm: 6, md: 3 }}>
+            <HorizontalWithSubtitle {...item} />
+          </Grid>
+        ))}
+      </Grid>
+    </>
   )
 }
 

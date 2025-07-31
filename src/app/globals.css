@@ -61,6 +61,16 @@ ul:not([class]) {
   direction: rtl;
 }
 
+/* tailwind.css */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 /* Fix closing issue when using hover trigger to open the menu and using
    perfectscrollbar where the bridge create with safe polygon by floating ui was not working
 */
