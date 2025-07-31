@@ -3,9 +3,6 @@ import Pagination from '@mui/material/Pagination'
 import Typography from '@mui/material/Typography'
 import type { Table } from '@tanstack/table-core'
 
-// Third Party Imports
-// import type { useReactTable } from '@tanstack/react-table'
-
 interface TablePaginationProps<T> {
   table: Table<T>
   totalCount: number
@@ -23,7 +20,7 @@ const TablePaginationComponent = <T,>({ table, totalCount, totalPages, onPageCha
   return (
     <div className='flex justify-between items-center flex-wrap pli-6 border-bs bs-auto plb-[12.5px] gap-2'>
       <Typography color='text.disabled' className='text-right w-full sm:w-auto'>
-        {`نمایش ${start.toLocaleString('fa-IR')} تا ${end.toLocaleString('fa-IR')} از ${totalCount.toLocaleString('fa-IR')} مورد`}
+        {`نمایش ${start} تا ${end} از ${totalCount} مورد`}
       </Typography>
       <Pagination
         shape='rounded'

@@ -3,16 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 
 import Card from '@mui/material/Card'
-import {
-  useReactTable,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFacetedMinMaxValues,
-  getPaginationRowModel,
-  getSortedRowModel,
-  type SortingState
-} from '@tanstack/react-table'
+import { useReactTable, getCoreRowModel, type SortingState } from '@tanstack/react-table'
 import { useMediaQuery } from '@mui/material'
 
 import UserListHeader from './UserListHeader'
@@ -24,13 +15,10 @@ import UserListBody from './UserListBody'
 import UserCard from './UserCard'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useUserParams } from '@/hooks/apps/user/useUserParams'
+import { DEFAULT_PAGE, DEFAULT_TAKE, defaultPagination } from '@/libs/constants/tableConfig'
 
 const UserListTable = () => {
-  const DEFAULT_PAGE = 1
-  const DEFAULT_TAKE = 1
-
-  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: DEFAULT_TAKE, page: DEFAULT_PAGE })
-  const [rowSelection, setRowSelection] = useState({})
+  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ page: DEFAULT_PAGE, take: DEFAULT_TAKE })
   const [sorting, setSorting] = useState<SortingState>([])
 
   const { setPage, setSize } = usePaginationParams(DEFAULT_PAGE, DEFAULT_TAKE)
@@ -40,31 +28,28 @@ const UserListTable = () => {
 
   const userData = getAllUsers?.data.items || []
 
-  const pager = getAllUsers?.data.pager || {
-    totalCount: 0,
-    totalPages: 1,
-    currentPage: 1,
-    hasNextPage: false,
-    hasPreviousPage: false
-  }
+  const pager = getAllUsers?.data.pager || defaultPagination
+
+  useEffect(() => {
+    setQueryParams(prev => ({
+      ...prev,
+      sortBy: sorting[0]?.id as GetUsersQueryParams['sortBy'],
+      sortDirection: sorting[0]?.desc ? 'desc' : 'asc'
+    }))
+  }, [sorting])
 
   const table = useReactTable({
     data: userData,
     columns: columns(),
     state: {
-      rowSelection,
       sorting,
-      pagination: { pageIndex: pager.currentPage - 1, pageSize: queryParams.take || DEFAULT_TAKE }
+      pagination: {
+        pageIndex: pager.currentPage - 1,
+        pageSize: queryParams.take || DEFAULT_TAKE
+      }
     },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
     manualPagination: true,
     pageCount: pager.totalPages
   })
