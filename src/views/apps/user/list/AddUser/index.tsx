@@ -38,7 +38,7 @@ function AddUser() {
   const title = 'ثبت کاربر جدید'
   const confirmText = 'تأیید'
 
-  const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6 p-6' />
+  const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />
 
   return (
     <>

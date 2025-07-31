@@ -42,7 +42,7 @@ const CustomDrawer = ({
 
       <Divider />
 
-      {description ? <Typography className='p-6'>{description}</Typography> : <div>{formContent}</div>}
+      {description ? <Typography className='p-6'>{description}</Typography> : <div className='p-6'>{formContent}</div>}
 
       <Divider />
 
