@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 import { IconButton } from '@mui/material'
 
-import ConfirmDialog from '@/components/dialogs/transitions/ConfirmDialog'
+import TransitionDialog from '@/components/dialogs/transitions/TransitionDialog'
 import { useUserMutations } from '@/hooks/apps/useUser'
 
 interface RemoveUserDialogProps {
@@ -32,7 +32,7 @@ function RemoveUserDialog({ userId }: RemoveUserDialogProps) {
         <i className='tabler-trash text-textSecondary' />
       </IconButton>
 
-      <ConfirmDialog
+      <TransitionDialog
         title='حذف کاربر'
         contentText='آیا مطمئن هستید که می‌خواهید این کاربر را حذف کنید؟'
         confirmText='حذف'

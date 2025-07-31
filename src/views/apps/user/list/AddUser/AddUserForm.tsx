@@ -1,35 +1,31 @@
-// React Imports
-import React, { useState } from 'react'
+import { useState, forwardRef, useImperativeHandle } from 'react'
 
 // MUI Imports
 import MenuItem from '@mui/material/MenuItem'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
 
 // Third-party Imports
 import { Controller, useForm } from 'react-hook-form'
-
-// Component Imports
-import { Button, IconButton, InputAdornment } from '@mui/material'
-
 import { zodResolver } from '@hookform/resolvers/zod'
 
+// Component Imports
 import CustomTextField from '@core/components/mui/TextField'
 import { AddUserSchema, type AddUserFormData } from '@/libs/schemas/user/user.schema'
-
-import { useUserMutations } from '@/hooks/apps/useUser'
 import { UserRole } from '@/types/apps/user.types'
-import LoadingButton from '@/components/base/LoadingButton'
 
 interface AddUserFormProps {
-  onSubmitSuccess: () => void
   classNamesForm?: string
+  onSubmit: (data: AddUserFormData) => void
 }
 
-function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
-  // States
+interface AddUserFormRef {
+  resetForm: () => void
+}
+
+const AddUserForm = forwardRef<AddUserFormRef, AddUserFormProps>(({ classNamesForm, onSubmit }, ref) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [isConfirmPasswordShown, setIsConfirmPasswordShown] = useState(false)
-
-  const { addUser, addUserStatus } = useUserMutations()
 
   const {
     control,
@@ -47,26 +43,19 @@ function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
     }
   })
 
-  const handleReset = () => {
-    resetForm()
-
-    // handleClose()
-  }
+  useImperativeHandle(ref, () => ({
+    resetForm
+  }))
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
   const handleClickShowConfirmPassword = () => setIsConfirmPasswordShown(show => !show)
 
-  const onSubmit = (data: AddUserFormData) => {
-    addUser(data, {
-      onSuccess: () => {
-        onSubmitSuccess()
-        resetForm()
-      }
-    })
+  const handleFormSubmit = (data: AddUserFormData) => {
+    onSubmit(data)
   }
 
   return (
-    <form onSubmit={handleSubmit(data => onSubmit(data))} className={classNamesForm}>
+    <form id='add-user-form' onSubmit={handleSubmit(handleFormSubmit)} className={classNamesForm}>
       <Controller
         name='username'
         control={control}
@@ -82,7 +71,6 @@ function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
           />
         )}
       />
-
       <Controller
         name='mobile'
         control={control}
@@ -97,7 +85,6 @@ function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
           />
         )}
       />
-
       <Controller
         name='role'
         control={control}
@@ -116,7 +103,6 @@ function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
           </CustomTextField>
         )}
       />
-
       <Controller
         name='password'
         control={control}
@@ -173,17 +159,10 @@ function AddUserForm({ onSubmitSuccess, classNamesForm }: AddUserFormProps) {
           />
         )}
       />
-      <div className='flex items-center gap-4'>
-        <LoadingButton isLoading={addUserStatus === 'pending'} variant='contained' type='submit'>
-          تایید
-        </LoadingButton>
-
-        <Button variant='tonal' color='error' type='reset' onClick={() => handleReset()}>
-          انصراف
-        </Button>
-      </div>
     </form>
   )
-}
+})
+
+AddUserForm.displayName = 'AddUserForm'
 
 export default AddUserForm

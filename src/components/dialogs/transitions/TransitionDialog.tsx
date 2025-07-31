@@ -1,7 +1,7 @@
 'use client'
 
-import type { ReactElement, Ref } from 'react'
-import { forwardRef } from 'react'
+import type { ReactElement, ReactNode, Ref } from 'react'
+import React, { forwardRef } from 'react'
 
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
@@ -26,6 +26,7 @@ interface ConfirmDialogProps {
   cancelText?: string
   colorConfirm?: ButtonProps['color']
   colorCancel?: ButtonProps['color']
+  children?: ReactNode
   isLoadingConfirm?: boolean
   open: boolean
   setOpen: (open: boolean) => void
@@ -33,13 +34,14 @@ interface ConfirmDialogProps {
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 }
 
-const ConfirmDialog = ({
+const TransitionDialog = ({
   title,
   contentText,
   confirmText = 'تایید',
   cancelText = 'انصراف',
   colorConfirm = 'primary',
   colorCancel = 'secondary',
+  children,
   isLoadingConfirm = false,
   open,
   setOpen,
@@ -66,6 +68,8 @@ const ConfirmDialog = ({
           </DialogContent>
         )}
 
+        {children && <DialogContent>{children}</DialogContent>}
+
         <DialogActions className='dialog-actions-dense'>
           <Button onClick={handleClose} color={colorCancel} disabled={isLoadingConfirm}>
             {cancelText}
@@ -80,4 +84,4 @@ const ConfirmDialog = ({
   )
 }
 
-export default ConfirmDialog
+export default TransitionDialog
