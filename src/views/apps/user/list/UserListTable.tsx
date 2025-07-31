@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import Card from '@mui/material/Card'
 import {
@@ -13,31 +13,28 @@ import {
   getSortedRowModel,
   type SortingState
 } from '@tanstack/react-table'
-
 import { useMediaQuery } from '@mui/material'
 
 import UserListHeader from './UserListHeader'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
 import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
-import { useAllUsers } from '@/hooks/apps/useUser'
+import { useAllUsers } from '@/hooks/apps/user/useUser'
 import { columns } from './Columns'
 import UserListBody from './UserListBody'
 import UserCard from './UserCard'
-import AddUser from './AddUser'
+import { usePaginationParams } from '@/hooks/usePaginationParams'
+import { useUserParams } from '@/hooks/apps/user/useUserParams'
 
 const UserListTable = () => {
-  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: 10, page: 1 })
-  const [globalFilter, setGlobalFilter] = useState('')
+  const DEFAULT_PAGE = 1
+  const DEFAULT_TAKE = 1
+
+  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ take: DEFAULT_TAKE, page: DEFAULT_PAGE })
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
 
-  useEffect(() => {
-    setQueryParams(prev => ({
-      ...prev,
-      sortBy: sorting[0]?.id as GetUsersQueryParams['sortBy'],
-      sortDirection: sorting[0]?.desc ? 'desc' : 'asc'
-    }))
-  }, [sorting])
+  const { setPage, setSize } = usePaginationParams(DEFAULT_PAGE, DEFAULT_TAKE)
+  const { search, setSearch } = useUserParams()
 
   const { data: getAllUsers, isLoading: isLoadingUsers, isError: isErrorUsers } = useAllUsers(queryParams)
 
@@ -56,13 +53,11 @@ const UserListTable = () => {
     columns: columns(),
     state: {
       rowSelection,
-      globalFilter,
       sorting,
-      pagination: { pageIndex: pager.currentPage - 1, pageSize: queryParams.take || 10 }
+      pagination: { pageIndex: pager.currentPage - 1, pageSize: queryParams.take || DEFAULT_TAKE }
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -74,24 +69,37 @@ const UserListTable = () => {
     pageCount: pager.totalPages
   })
 
-  const handlePageChange = (_: any, page: number) => {
-    setQueryParams(prev => ({ ...prev, page }))
-    table.setPageIndex(page - 1)
-  }
+  const handlePageChange = useCallback(
+    (_: any, page: number) => {
+      setPage(page)
+      setQueryParams(prev => ({ ...prev, page }))
+      table.setPageIndex(page - 1)
+    },
+    [table, setPage]
+  )
 
-  const handlePageSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSize = Number(e.target.value)
+  const handlePageSizeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newSize = Number(e.target.value)
 
-    setQueryParams(prev => ({ ...prev, take: newSize, page: 1 }))
-    table.setPageSize(newSize)
-    table.setPageIndex(0)
-  }
+      setSize(newSize)
+      setQueryParams(prev => ({ ...prev, take: newSize, page: DEFAULT_PAGE }))
 
-  const handleSearch = (value: string) => {
-    if (value === globalFilter) return
-    setGlobalFilter(value)
-    setQueryParams(prev => ({ ...prev, search: value }))
-  }
+      table.setPageSize(newSize)
+      table.setPageIndex(0)
+    },
+    [table, setSize]
+  )
+
+  const handleSearch = useCallback(
+    (value: string) => {
+      if (value === search) return
+
+      setSearch(value)
+      setQueryParams(prev => ({ ...prev, search: value, page: DEFAULT_PAGE }))
+    },
+    [search, setSearch]
+  )
 
   const isMobile = useMediaQuery('(max-width: 1024px)')
   const [mounted, setMounted] = useState(false)
@@ -105,33 +113,29 @@ const UserListTable = () => {
   return (
     <>
       {isMobile ? (
-        <>
-          <AddUser />
-          <div className='grid grid-cols-1 gap-4'>
-            <div className='flex flex-col gap-4'>
-              {userData.map(user => (
-                <UserCard key={user.id} user={user} />
-              ))}
-            </div>
-            <Card>
-              <TablePaginationComponent<UserType>
-                table={table}
-                totalCount={pager.totalCount}
-                totalPages={pager.totalPages}
-                onPageChange={handlePageChange}
-              />
-            </Card>
+        <div className='grid grid-cols-1 gap-4'>
+          <div className='flex flex-col gap-4'>
+            {userData.map(user => (
+              <UserCard key={user.id} user={user} />
+            ))}
           </div>
-        </>
+          <Card>
+            <TablePaginationComponent<UserType>
+              table={table}
+              totalCount={pager.totalCount}
+              totalPages={pager.totalPages}
+              onPageChange={handlePageChange}
+            />
+          </Card>
+        </div>
       ) : (
         <Card>
           <UserListHeader
-            globalFilter={globalFilter}
+            searchInput={search}
             onSearch={handleSearch}
             pageSize={table.getState().pagination.pageSize}
             onPageSizeChange={handlePageSizeChange}
           />
-
           <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
           <TablePaginationComponent<UserType>
             table={table}

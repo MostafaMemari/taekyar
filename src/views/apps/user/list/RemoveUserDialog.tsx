@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 
 import { IconButton, useMediaQuery } from '@mui/material'
 
-import { useUserMutations } from '@/hooks/apps/useUser'
+import { useUserMutations } from '@/hooks/apps/user/useUser'
 import { CustomDialog } from '@/components/dialog/CustomDialog'
 import CustomDrawer from '@/components/drawer/CustomDrawer'
 

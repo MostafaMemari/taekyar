@@ -4,7 +4,7 @@
 import Grid from '@mui/material/Grid2'
 
 // Component Imports
-import { useRoleCounts } from '@/hooks/apps/useUser'
+import { useRoleCounts } from '@/hooks/apps/user/useUser'
 import type { UserDataType } from '@/components/card-statistics/HorizontalWithSubtitle'
 import HorizontalWithSubtitle from '@/components/card-statistics/HorizontalWithSubtitle'
 

@@ -6,7 +6,7 @@ import { useMediaQuery } from '@mui/material'
 import classNames from 'classnames'
 
 import AddUserForm from './AddUserForm'
-import { useUserMutations } from '@/hooks/apps/useUser'
+import { useUserMutations } from '@/hooks/apps/user/useUser'
 import { type AddUserFormData } from '@/libs/schemas/user/user.schema'
 import CustomDrawer from '@/components/drawer/CustomDrawer'
 import { CustomDialog } from '@/components/dialog/CustomDialog'

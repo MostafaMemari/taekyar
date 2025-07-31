@@ -9,13 +9,13 @@ import DebouncedInput from '@/components/inputs/DebouncedInput'
 import AddUser from './AddUser'
 
 type Props = {
-  globalFilter: string
+  searchInput: string
   onSearch: (value: string) => void
   pageSize: number
   onPageSizeChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const UserListHeader = ({ globalFilter, onSearch, pageSize, onPageSizeChange }: Props) => {
+const UserListHeader = ({ searchInput, onSearch, pageSize, onPageSizeChange }: Props) => {
   return (
     <>
       <CardHeader title='لیست کاربران' />
@@ -24,7 +24,7 @@ const UserListHeader = ({ globalFilter, onSearch, pageSize, onPageSizeChange }: 
           <AddUser />
 
           <DebouncedInput
-            value={globalFilter ?? ''}
+            value={searchInput ?? ''}
             onChange={value => onSearch(String(value))}
             placeholder='جستجوی کاربر'
             className='max-sm:is-full'
