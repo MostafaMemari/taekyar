@@ -60,7 +60,7 @@ const ModeDropdown = () => {
   return (
     <>
       <Tooltip
-        title={settings.mode + ' Mode'}
+        title={settings.mode ? (settings.mode === 'dark' ? 'تاریک' : 'روشن') : 'سیستم'}
         onOpen={() => setTooltipOpen(true)}
         onClose={() => setTooltipOpen(false)}
         open={open ? false : tooltipOpen ? true : false}
@@ -92,7 +92,7 @@ const ModeDropdown = () => {
                     selected={settings.mode === 'light'}
                   >
                     <i className='tabler-sun' />
-                    Light
+                    روشن
                   </MenuItem>
                   <MenuItem
                     className='gap-3'
@@ -100,7 +100,7 @@ const ModeDropdown = () => {
                     selected={settings.mode === 'dark'}
                   >
                     <i className='tabler-moon-stars' />
-                    Dark
+                    تاریک
                   </MenuItem>
                   <MenuItem
                     className='gap-3'
@@ -108,7 +108,7 @@ const ModeDropdown = () => {
                     selected={settings.mode === 'system'}
                   >
                     <i className='tabler-device-laptop' />
-                    System
+                    سیستم
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>

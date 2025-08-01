@@ -82,6 +82,7 @@ const VerticalMenu = ({ scrollMenu }: Props) => {
           About
         </MenuItem>
       </Menu> */}
+
       <Menu
         popoutMenuOffset={{ mainAxis: 23 }}
         menuItemStyles={menuItemStyles(verticalNavOptions, theme)}
