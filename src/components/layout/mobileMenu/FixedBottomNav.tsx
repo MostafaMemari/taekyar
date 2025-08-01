@@ -33,13 +33,13 @@ const FixedBottomNav = ({ onMiddleClick }: FixedBottomNavProps) => {
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 1201
+        zIndex: 100
       }}
     >
       <BottomNavigation
         showLabels
         value={value}
-        onChange={(event, newValue) => {
+        onChange={(_, newValue) => {
           setValue(newValue)
 
           switch (newValue) {

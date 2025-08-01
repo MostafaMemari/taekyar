@@ -47,7 +47,9 @@ function AddUser() {
         variant='contained'
         startIcon={<i className='tabler-plus' />}
         className={classNames(
-          isMobile ? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full shadow-lg px-4 py-3' : 'max-sm:is-full'
+          isMobile
+            ? 'fixed bottom-16 left-1/2 -translate-x-1/2 z-50 rounded-full shadow-lg px-4 py-3'
+            : 'max-sm:is-full'
         )}
       >
         افزودن کاربر جدید
