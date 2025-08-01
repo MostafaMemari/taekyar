@@ -7,45 +7,10 @@ import Grid from '@mui/material/Grid2'
 import { useRoleCounts } from '@/hooks/apps/user/useUser'
 import type { UserDataType } from '@/components/card-statistics/HorizontalWithSubtitle'
 import HorizontalWithSubtitle from '@/components/card-statistics/HorizontalWithSubtitle'
+import { getRoleCardData } from '@/configs/roleConfig'
+import UserListCardsSkeleton from './UserListCardsSkeleton.tsx'
 
 const roleOrder = ['SUPER_ADMIN', 'ADMIN_CLUB', 'COACH', 'STUDENT']
-
-const getRoleCardData = (role: string, count: number): UserDataType => {
-  const roleConfig: Record<string, { title: string; avatarIcon: string; avatarColor: string; subtitle: string }> = {
-    SUPER_ADMIN: {
-      title: 'مدیران ارشد',
-      avatarIcon: 'tabler-shield-check',
-      avatarColor: 'error',
-      subtitle: 'کل مدیران ارشد'
-    },
-    ADMIN_CLUB: {
-      title: 'مدیران باشگاه',
-      avatarIcon: 'tabler-building-community',
-      avatarColor: 'primary',
-      subtitle: 'کل مدیران باشگاه'
-    },
-    COACH: {
-      title: 'مربیان',
-      avatarIcon: 'tabler-run',
-      avatarColor: 'warning',
-      subtitle: 'کل مربیان'
-    },
-    STUDENT: {
-      title: 'هنرجویان',
-      avatarIcon: 'tabler-user',
-      avatarColor: 'success',
-      subtitle: 'هنرجویان ثبت‌نام شده'
-    }
-  }
-
-  return {
-    title: roleConfig[role]?.title || role,
-    stats: count.toString(),
-    avatarIcon: roleConfig[role]?.avatarIcon || 'tabler-user',
-    avatarColor: roleConfig[role]?.avatarColor as 'primary' | 'error' | 'success' | 'warning' | undefined,
-    subtitle: roleConfig[role]?.subtitle || 'تعداد کاربران'
-  }
-}
 
 const UserListCards = () => {
   const { data: roleCounts, isLoading } = useRoleCounts()
@@ -76,7 +41,7 @@ const UserListCards = () => {
       ) || []
 
   if (isLoading) {
-    return <div className='flex justify-center items-center h-full'>در حال بارگذاری...</div>
+    return <UserListCardsSkeleton />
   }
 
   return (
