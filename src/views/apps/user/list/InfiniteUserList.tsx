@@ -1,56 +1,30 @@
-import { useEffect } from 'react'
+'use client'
 
 import InfiniteScroll from 'react-infinite-scroll-component'
 
+import type { UserType } from '@/types/apps/user.types'
 import UserCard from './UserCard'
-import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
 
 interface InfiniteUserListProps {
-  userData: UserType[]
-  setUserData: React.Dispatch<React.SetStateAction<UserType[]>>
-  queryParams: GetUsersQueryParams
-  setQueryParams: (params: GetUsersQueryParams) => void
+  allUserData: UserType[]
   hasMore: boolean
-  setHasMore: (hasMore: boolean) => void
-  getAllUsers: any // Adjust type as necessary based on your data fetching logic
+  loadMore: () => void
 }
 
-const InfiniteUserList = ({
-  userData,
-  setUserData,
-  queryParams,
-  setQueryParams,
-  hasMore,
-  setHasMore,
-  getAllUsers
-}: InfiniteUserListProps) => {
-  useEffect(() => {
-    if (getAllUsers?.data?.items) {
-      setUserData((prev: UserType[]) => [...prev, ...getAllUsers.data.items])
-      setHasMore(getAllUsers.data.pager.hasNextPage)
-    }
-  }, [getAllUsers, setUserData, setHasMore])
-
-  const fetchMoreData = () => {
-    setQueryParams({ ...queryParams })
-  }
-
+const InfiniteUserList = ({ allUserData, hasMore, loadMore }: InfiniteUserListProps) => {
   return (
-    <div id='scrollableDiv' style={{ height: '80vh', overflow: 'auto' }}>
+    <div className='grid grid-cols-1 gap-4'>
       <InfiniteScroll
-        dataLength={userData.length}
-        next={fetchMoreData}
+        dataLength={allUserData.length}
+        next={loadMore}
         hasMore={hasMore}
-        loader={<h4>در حال بارگذاری...</h4>}
-        scrollableTarget='scrollableDiv'
-        endMessage={<p>همه داده‌ها بارگذاری شدند</p>}
+        loader={<div className='flex justify-center py-4'>در حال بارگذاری...</div>}
+        endMessage={<div className='flex justify-center py-4'>داده بیشتری وجود ندارد</div>}
       >
-        <div className='grid grid-cols-1 gap-4'>
-          <div className='flex flex-col gap-4'>
-            {userData.map(user => (
-              <UserCard key={user.id} user={user} />
-            ))}
-          </div>
+        <div className='flex flex-col gap-4'>
+          {allUserData.map(user => (
+            <UserCard key={user.id} user={user} />
+          ))}
         </div>
       </InfiniteScroll>
     </div>

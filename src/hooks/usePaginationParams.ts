@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react'
 
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
-export const usePaginationParams = (defaultPage = 1, defaultSize = 10) => {
+import { DEFAULT_PAGE, DEFAULT_TAKE } from '@/libs/constants/tableConfig'
+
+export const usePaginationParams = (defaultPage = DEFAULT_PAGE, defaultSize = DEFAULT_TAKE) => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()

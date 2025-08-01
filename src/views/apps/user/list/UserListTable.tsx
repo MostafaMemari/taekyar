@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 
 import Card from '@mui/material/Card'
 import { useReactTable, getCoreRowModel, type SortingState } from '@tanstack/react-table'
@@ -12,31 +12,44 @@ import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
 import { useAllUsers } from '@/hooks/apps/user/useUser'
 import { columns } from './Columns'
 import UserListBody from './UserListBody'
-import UserCard from './UserCard'
+import InfiniteUserList from './InfiniteUserList'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useUserParams } from '@/hooks/apps/user/useUserParams'
 import { DEFAULT_PAGE, DEFAULT_TAKE, defaultPagination } from '@/libs/constants/tableConfig'
 
 const UserListTable = () => {
-  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ page: DEFAULT_PAGE, take: DEFAULT_TAKE })
-  const [sorting, setSorting] = useState<SortingState>([])
+  const { page, size, setPage, setSize } = usePaginationParams()
 
-  const { setPage, setSize } = usePaginationParams(DEFAULT_PAGE, DEFAULT_TAKE)
+  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ page, take: size })
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [allUserData, setAllUserData] = useState<UserType[]>([])
+  const [hasMore, setHasMore] = useState(true)
+
   const { search, setSearch } = useUserParams()
 
   const { data: getAllUsers, isLoading: isLoadingUsers, isError: isErrorUsers } = useAllUsers(queryParams)
 
-  const userData = getAllUsers?.data.items || []
-
-  const pager = getAllUsers?.data.pager || defaultPagination
+  const userData = useMemo(() => getAllUsers?.data.items || [], [getAllUsers?.data.items])
+  const pager = useMemo(() => getAllUsers?.data.pager || defaultPagination, [getAllUsers?.data.pager])
 
   useEffect(() => {
-    setQueryParams(prev => ({
-      ...prev,
-      sortBy: sorting[0]?.id as GetUsersQueryParams['sortBy'],
-      sortDirection: sorting[0]?.desc ? 'desc' : 'asc'
-    }))
+    if (sorting.length !== 0) {
+      setQueryParams(prev => ({
+        ...prev,
+        sortBy: sorting[0]?.id as GetUsersQueryParams['sortBy'],
+        sortDirection: sorting[0]?.desc ? 'desc' : 'asc'
+      }))
+    }
   }, [sorting])
+
+  useEffect(() => {
+    if (userData.length > 0) {
+      if (queryParams.page === DEFAULT_PAGE) setAllUserData(userData)
+      else setAllUserData(prev => [...prev, ...userData])
+
+      setHasMore(pager.currentPage < pager.totalPages)
+    }
+  }, [userData, queryParams.page, pager.currentPage, pager.totalPages])
 
   const table = useReactTable({
     data: userData,
@@ -56,20 +69,18 @@ const UserListTable = () => {
 
   const handlePageChange = useCallback(
     (_: any, page: number) => {
-      setPage(page)
       setQueryParams(prev => ({ ...prev, page }))
       table.setPageIndex(page - 1)
     },
-    [table, setPage]
+    [table, setQueryParams]
   )
 
   const handlePageSizeChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const newSize = Number(e.target.value)
 
-      setSize(newSize)
+      setSize(DEFAULT_PAGE)
       setQueryParams(prev => ({ ...prev, take: newSize, page: DEFAULT_PAGE }))
-
       table.setPageSize(newSize)
       table.setPageIndex(0)
     },
@@ -79,12 +90,21 @@ const UserListTable = () => {
   const handleSearch = useCallback(
     (value: string) => {
       if (value === search) return
-
       setSearch(value)
+      setPage(DEFAULT_PAGE)
       setQueryParams(prev => ({ ...prev, search: value, page: DEFAULT_PAGE }))
+      setAllUserData([])
     },
-    [search, setSearch]
+    [search, setSearch, setPage, setQueryParams]
   )
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || isLoadingUsers) return
+    const nextPage = (queryParams.page || DEFAULT_PAGE) + 1
+
+    setPage(nextPage)
+    setQueryParams(prev => ({ ...prev, page: nextPage }))
+  }, [hasMore, isLoadingUsers, setPage, queryParams.page])
 
   const isMobile = useMediaQuery('(max-width: 1024px)')
   const [mounted, setMounted] = useState(false)
@@ -98,21 +118,7 @@ const UserListTable = () => {
   return (
     <>
       {isMobile ? (
-        <div className='grid grid-cols-1 gap-4'>
-          <div className='flex flex-col gap-4'>
-            {userData.map(user => (
-              <UserCard key={user.id} user={user} />
-            ))}
-          </div>
-          <Card>
-            <TablePaginationComponent<UserType>
-              table={table}
-              totalCount={pager.totalCount}
-              totalPages={pager.totalPages}
-              onPageChange={handlePageChange}
-            />
-          </Card>
-        </div>
+        <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
       ) : (
         <Card>
           <UserListHeader
