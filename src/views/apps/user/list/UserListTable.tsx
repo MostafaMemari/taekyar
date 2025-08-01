@@ -16,6 +16,7 @@ import InfiniteUserList from './InfiniteUserList'
 import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useUserParams } from '@/hooks/apps/user/useUserParams'
 import { DEFAULT_PAGE, DEFAULT_TAKE, defaultPagination } from '@/libs/constants/tableConfig'
+import AddUser from './AddUser'
 
 const UserListTable = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
@@ -118,7 +119,10 @@ const UserListTable = () => {
   return (
     <>
       {isMobile ? (
-        <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+        <>
+          <AddUser />
+          <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+        </>
       ) : (
         <Card>
           <UserListHeader

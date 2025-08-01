@@ -19,24 +19,8 @@ import type {
 import { SubMenu as HorizontalSubMenu, MenuItem as HorizontalMenuItem } from '@menu/horizontal-menu'
 import { SubMenu as VerticalSubMenu, MenuItem as VerticalMenuItem, MenuSection } from '@menu/vertical-menu'
 import CustomChip from '@core/components/mui/Chip'
-import { UserRole } from '@/types/apps/user.types'
-
-const filterSuperAdminItems = (items: VerticalMenuDataType[], role: UserRole): VerticalMenuDataType[] => {
-  return items
-    .filter(item => {
-      return item.roles ? item.roles.includes(role) : false
-    })
-    .map(item => {
-      if ('children' in item && item.children) {
-        return {
-          ...item,
-          children: filterSuperAdminItems(item.children, role)
-        }
-      }
-
-      return item
-    })
-}
+import type { UserRole } from '@/types/apps/user.types'
+import filterSuperAdminItems from '@/utils/filterSuperAdminItems'
 
 interface GenerateMenuProps {
   menuData: VerticalMenuDataType[] | HorizontalMenuDataType[]
@@ -47,7 +31,7 @@ interface GenerateMenuProps {
 // Generate a menu from the menu data array
 export const GenerateVerticalMenu = ({ menuData, role, isLoading }: GenerateMenuProps) => {
   const renderMenuItems = (data: VerticalMenuDataType[]) => {
-    const filteredData = filterSuperAdminItems(data, role || UserRole.COACH)
+    const filteredData = filterSuperAdminItems(data, role)
 
     return filteredData.map((item: VerticalMenuDataType, index) => {
       const menuSectionItem = item as VerticalSectionDataType
