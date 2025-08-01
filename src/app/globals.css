@@ -71,6 +71,13 @@ ul:not([class]) {
   scrollbar-width: none; /* Firefox */
 }
 
+/************************/
+@media (max-width: 1200px) {
+  .ts-vertical-nav-root {
+    display: none;
+  }
+}
+
 /* Fix closing issue when using hover trigger to open the menu and using
    perfectscrollbar where the bridge create with safe polygon by floating ui was not working
 */

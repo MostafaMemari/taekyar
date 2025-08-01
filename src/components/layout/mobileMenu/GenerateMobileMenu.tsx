@@ -69,7 +69,7 @@ export const GenerateMobileMenu = ({
                         )
 
                       return (
-                        <Grid size={6} key={i}>
+                        <Grid size={{ xs: 6, sm: 4, md: 3 }} key={i}>
                           <Box
                             onClick={() => handleDrawerItemClick(childItem.href)}
                             border={1.5}

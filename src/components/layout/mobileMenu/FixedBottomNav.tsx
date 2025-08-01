@@ -13,7 +13,7 @@ interface FixedBottomNavProps {
 const FixedBottomNav = ({ onMiddleClick }: FixedBottomNavProps) => {
   const router = useRouter()
   const pathname = usePathname()
-  const isMobile = useMediaQuery('(max-width:600px)')
+  const isMobile = useMediaQuery('(max-width:1200px)')
   const [value, setValue] = useState(-1)
 
   useEffect(() => {
