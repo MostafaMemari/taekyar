@@ -8,7 +8,7 @@ import { Drawer } from '@mui/material'
 
 import { useAuthStore } from '@/store'
 import mobileMenu from '@/data/navigation/mobileMenuData'
-import { GenerateMobileMenu } from '../../GenerateMobileMenu'
+import { GenerateMobileMenu } from './GenerateMobileMenu'
 import FixedBottomNav from './FixedBottomNav'
 
 const MobileBottomNav = () => {
