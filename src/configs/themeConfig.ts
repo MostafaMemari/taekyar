@@ -20,6 +20,7 @@
 import type { Mode, Skin, Layout, LayoutComponentPosition, LayoutComponentWidth } from '@core/types'
 
 type Navbar = {
+  hidden: boolean
   type: LayoutComponentPosition
   contentWidth: LayoutComponentWidth
   floating: boolean
@@ -60,6 +61,7 @@ const themeConfig: Config = {
   layoutPadding: 24, // Common padding for header, content, footer layout components (in px)
   compactContentWidth: 1440, // in px
   navbar: {
+    hidden: true, // true, false
     type: 'fixed', // 'fixed', 'static'
     contentWidth: 'compact', // 'compact', 'wide'
     floating: true, //! true, false (This will not work in the Horizontal Layout)

@@ -43,6 +43,10 @@ const Navbar = (props: Props) => {
   // Vars
   const { navbarContentWidth } = settings
 
+  const headerHidden = themeConfig.navbar.hidden === true
+
+  if (headerHidden) return null
+
   const headerFixed = themeConfig.navbar.type === 'fixed'
   const headerStatic = themeConfig.navbar.type === 'static'
   const headerFloating = themeConfig.navbar.floating === true
