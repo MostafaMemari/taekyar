@@ -14,22 +14,44 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
   return (
     <Card>
       <CardHeader
-        avatar={<CustomAvatar size={40}>{getInitials(user.username)}</CustomAvatar>}
-        subheader={userRoleLabels[user.role]}
-        title={user.username}
+        sx={{ p: 4 }}
+        avatar={<CustomAvatar size={40}>{getInitials(user.username || user.mobile)}</CustomAvatar>}
+        title={
+          <Typography variant='subtitle1' fontWeight='bold'>
+            {user.username}
+          </Typography>
+        }
+        subheader={
+          <Typography variant='caption' color='text.secondary'>
+            نقش: {userRoleLabels[user.role]}
+          </Typography>
+        }
         action={
           <OptionMenu
             iconButtonProps={{ size: 'medium' }}
             icon={<i className='tabler-dots-vertical' />}
             options={[
               {
-                text: 'حذف',
-                icon: 'tabler-trash',
+                text: 'ویرایش',
+                icon: 'tabler-edit',
                 menuItemProps: {
                   className: 'flex items-center gap-2 text-textSecondary',
                   onClick: () => {
-                    // Handle delete user action here
-                    console.log(`Delete user with ID: ${user.id}`)
+                    console.log(`Edit user ID: ${user.id}`)
+
+                    // openEditModal(user)
+                  }
+                }
+              },
+              {
+                text: 'حذف',
+                icon: 'tabler-trash',
+                menuItemProps: {
+                  className: 'flex items-center gap-2 text-red-600',
+                  onClick: () => {
+                    console.log(`Delete user ID: ${user.id}`)
+
+                    // confirmDelete(user.id)
                   }
                 }
               }
@@ -37,13 +59,34 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
           />
         }
       />
+
       <Divider />
-      <CardContent className='flex flex-col gap-[1.0875rem]'>
-        <Typography variant='body2' color='text.primary'>
-          <strong>شماره موبایل:</strong> {user.mobile}
+
+      <CardContent sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Typography variant='body2' color='text.primary' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <i className='tabler-phone text-[20px]' />
+          <strong>شماره موبایل:</strong>
+          <span>{user.mobile}</span>
         </Typography>
-        <Typography variant='body2' color='text.primary'>
-          <strong>تاریخ ایجاد:</strong> {new Date(user.createdAt).toLocaleDateString('fa-IR')}
+
+        <Typography variant='body2' color='text.primary' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <i className='tabler-calendar text-[20px]' />
+          <strong>تاریخ ایجاد:</strong>
+          <span>{new Date(user.createdAt).toLocaleDateString('fa-IR')}</span>
+        </Typography>
+
+        <Typography variant='body2' color='text.primary' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <i className='tabler-lock text-[20px]' />
+          <strong>آخرین تغییر رمز:</strong>
+          <span>
+            {user.lastPasswordChange ? new Date(user.lastPasswordChange).toLocaleDateString('fa-IR') : 'ثبت نشده'}
+          </span>
+        </Typography>
+
+        <Typography variant='body2' color='text.primary' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <i className='tabler-refresh text-[20px]' />
+          <strong>آخرین بروزرسانی:</strong>
+          <span>{new Date(user.updatedAt).toLocaleDateString('fa-IR')}</span>
         </Typography>
       </CardContent>
     </Card>
