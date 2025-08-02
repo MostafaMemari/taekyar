@@ -17,6 +17,7 @@ import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { useUserParams } from '@/hooks/apps/user/useUserParams'
 import { DEFAULT_PAGE, DEFAULT_TAKE, defaultPagination } from '@/libs/constants/tableConfig'
 import AddUser from './AddUser'
+import { UserListSkeleton, UserMobileCardSkeleton } from './UserListSkeleton'
 
 const UserListTable = () => {
   const { page, size, setPage, setSize } = usePaginationParams()
@@ -108,6 +109,7 @@ const UserListTable = () => {
   }, [hasMore, isLoadingUsers, setPage, queryParams.page])
 
   const isMobile = useMediaQuery('(max-width: 1024px)')
+
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -121,7 +123,11 @@ const UserListTable = () => {
       {isMobile ? (
         <>
           <AddUser />
-          <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+          {isLoadingUsers ? (
+            <UserMobileCardSkeleton />
+          ) : (
+            <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+          )}
         </>
       ) : (
         <Card>
@@ -131,7 +137,11 @@ const UserListTable = () => {
             pageSize={table.getState().pagination.pageSize}
             onPageSizeChange={handlePageSizeChange}
           />
-          <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
+          {isLoadingUsers ? (
+            <UserListSkeleton />
+          ) : (
+            <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
+          )}
           <TablePaginationComponent<UserType>
             table={table}
             totalCount={pager.totalCount}
