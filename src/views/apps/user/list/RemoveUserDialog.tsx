@@ -6,7 +6,7 @@ import { IconButton, useMediaQuery } from '@mui/material'
 
 import { useUserMutations } from '@/hooks/apps/user/useUser'
 import { CustomDialog } from '@/components/dialog/CustomDialog'
-import CustomDrawer from '@/components/drawer/CustomDrawer'
+import ConfirmDrawer from '@/components/drawer/ConfirmDrawer'
 
 interface RemoveUserDialogProps {
   userId: number
@@ -41,7 +41,7 @@ function RemoveUserDialog({ userId }: RemoveUserDialogProps) {
       </IconButton>
 
       {isMobile ? (
-        <CustomDrawer
+        <ConfirmDrawer
           open={open}
           title={title}
           description={description}

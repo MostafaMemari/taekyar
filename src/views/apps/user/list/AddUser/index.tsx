@@ -8,7 +8,7 @@ import classNames from 'classnames'
 import AddUserForm from './AddUserForm'
 import { useUserMutations } from '@/hooks/apps/user/useUser'
 import { type AddUserFormData } from '@/libs/schemas/user/user.schema'
-import CustomDrawer from '@/components/drawer/CustomDrawer'
+import ConfirmDrawer from '@/components/drawer/ConfirmDrawer'
 import { CustomDialog } from '@/components/dialog/CustomDialog'
 
 function AddUser() {
@@ -56,7 +56,7 @@ function AddUser() {
       </Button>
 
       {isMobile ? (
-        <CustomDrawer
+        <ConfirmDrawer
           open={open}
           title={title}
           formContent={formContent}

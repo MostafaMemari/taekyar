@@ -2,9 +2,9 @@ import { Button, Divider, Drawer, IconButton, Typography } from '@mui/material'
 
 import LoadingButton from '../base/LoadingButton'
 
-interface CustomDrawerProps {
+interface ConfirmDrawerProps {
   open: boolean
-  title: string
+  title?: string
   description?: string
   formContent?: React.ReactNode
   confirmText?: string
@@ -17,9 +17,9 @@ interface CustomDrawerProps {
   confirmColor?: 'primary' | 'error'
 }
 
-const CustomDrawer = ({
+const ConfirmDrawer = ({
   open,
-  title,
+  title = 'تأیید',
   description,
   formContent,
   confirmText = 'تأیید',
@@ -30,7 +30,7 @@ const CustomDrawer = ({
   confirmButtonType = 'button',
   formId,
   confirmColor = 'primary'
-}: CustomDrawerProps) => {
+}: ConfirmDrawerProps) => {
   return (
     <Drawer open={open} anchor='bottom' variant='temporary' onClose={onClose} ModalProps={{ keepMounted: true }}>
       <div className='flex items-center justify-between plb-5 pli-6'>
@@ -74,4 +74,4 @@ const CustomDrawer = ({
   )
 }
 
-export default CustomDrawer
+export default ConfirmDrawer
