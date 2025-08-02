@@ -40,9 +40,7 @@ const UserListCards = () => {
           )
       ) || []
 
-  if (isLoading) {
-    return <UserListCardsSkeleton />
-  }
+  if (isLoading) return <UserListCardsSkeleton />
 
   return (
     <>

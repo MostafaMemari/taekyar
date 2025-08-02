@@ -9,12 +9,11 @@ import type { UserTypeWithAction } from '@/types/apps/user.types'
 
 type Props = {
   table: Table<UserTypeWithAction>
-  isLoading: boolean
   isError: boolean
   userData: UserTypeWithAction[]
 }
 
-const UserListBody = ({ table, isLoading, isError, userData }: Props) => {
+const UserListBody = ({ table, isError, userData }: Props) => {
   return (
     <div className='overflow-x-auto'>
       <table className={tableStyles.table}>
@@ -44,13 +43,7 @@ const UserListBody = ({ table, isLoading, isError, userData }: Props) => {
           ))}
         </thead>
         <tbody>
-          {isLoading ? (
-            <tr>
-              <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
-                <Typography>در حال بارگذاری...</Typography>
-              </td>
-            </tr>
-          ) : isError ? (
+          {isError ? (
             <tr>
               <td colSpan={table.getVisibleFlatColumns().length} className='text-center'>
                 <Typography color='error'>خطا در بارگذاری داده‌ها</Typography>

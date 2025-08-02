@@ -97,7 +97,7 @@ const UserListTable = () => {
         {isLoadingUsers ? (
           <UserListSkeleton />
         ) : (
-          <UserListBody table={table} isLoading={isLoadingUsers} isError={isErrorUsers} userData={userData} />
+          <UserListBody table={table} isError={isErrorUsers} userData={userData} />
         )}
         <TablePaginationComponent<UserType>
           table={table}

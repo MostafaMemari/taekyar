@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 
+import { Box, Typography } from '@mui/material'
+
 import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
 import { useAllUsers } from '@/hooks/apps/user/useUser'
 import InfiniteUserList from '../InfiniteUserList'
@@ -9,7 +11,8 @@ import { usePaginationParams } from '@/hooks/usePaginationParams'
 import { DEFAULT_PAGE, defaultPagination } from '@/libs/constants/tableConfig'
 
 import { UserMobileCardSkeleton } from '../UserListSkeleton'
-import AddUserMobile from '../addUser/AddUserMobile'
+import AddUserMobile from './AddUserMobile'
+import SearchUserMobile from './SearchUserMobile'
 
 const UserCardItems = () => {
   const { page, size, setPage } = usePaginationParams()
@@ -40,21 +43,28 @@ const UserCardItems = () => {
     setQueryParams(prev => ({ ...prev, page: nextPage }))
   }, [hasMore, isLoadingUsers, setPage, queryParams.page])
 
-  // const [mounted, setMounted] = useState(false)
-
-  // useEffect(() => {
-  //   setMounted(true)
-  // }, [])
-
-  // if (!mounted) return null
-
   return (
     <>
-      <AddUserMobile />
+      <div className='fixed bottom-14 left-1/2 -translate-x-1/2 z-50 px-4 py-3 w-full'>
+        <div className='flex justify-between items-center gap-4'>
+          <AddUserMobile />
+          <SearchUserMobile
+            onSearch={query => {
+              console.log('در حال جستجو:', query)
+            }}
+          />
+        </div>
+      </div>
+
       {isLoadingUsers ? (
         <UserMobileCardSkeleton />
       ) : (
-        <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+        <>
+          <Box display='flex' justifyContent='center' width='100%' my={2}>
+            <Typography color='text.disabled'>{`${pager.totalCount} کاربر`}</Typography>
+          </Box>
+          <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+        </>
       )}
     </>
   )
