@@ -5,12 +5,11 @@ import { useRef, useEffect, useState } from 'react'
 
 import Button from '@mui/material/Button'
 
-import { useMediaQuery } from '@mui/material'
-
 import AddUserForm from './AddUserForm'
 import { CustomDialog } from '@/components/dialog/CustomDialog'
 import { useUserMutations } from '@/hooks/apps/user/useUser'
 import { type AddUserFormData } from '@/libs/schemas/user/user.schema'
+import useResponsive from '@/@menu/hooks/useResponsive'
 
 const AddUserDesktop = () => {
   const [open, setOpen] = useState(false)
@@ -18,7 +17,7 @@ const AddUserDesktop = () => {
   const formRef = useRef<{ resetForm: () => void }>(null)
   const isAddUserLoading = addUserStatus === 'pending'
 
-  const isDesktop = useMediaQuery('(min-width:900px)')
+  const { isMd } = useResponsive()
 
   const handleClose = () => setOpen(false)
   const handleOpen = () => setOpen(true)
@@ -35,10 +34,8 @@ const AddUserDesktop = () => {
   }, [addUserStatus])
 
   useEffect(() => {
-    if (!isDesktop && open) {
-      setOpen(false)
-    }
-  }, [isDesktop, open])
+    if (!isMd && open) setOpen(false)
+  }, [isMd, open])
 
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />
 
