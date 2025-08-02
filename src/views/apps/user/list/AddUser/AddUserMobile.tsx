@@ -28,7 +28,7 @@ const AddUserMobile = () => {
 
   useEffect(() => {
     if (addUserStatus === 'success') {
-      setOpen(false)
+      handleClose()
       formRef.current?.resetForm()
     }
   }, [addUserStatus])

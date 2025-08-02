@@ -8,6 +8,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, B
 import type { SlideProps } from '@mui/material/Slide'
 
 import LoadingButton from '../base/LoadingButton'
+import type { ThemeColor } from '@/@core/types'
 
 interface CustomDialogProps {
   open: boolean
@@ -21,7 +22,8 @@ interface CustomDialogProps {
   onConfirm?: () => void
   confirmButtonType?: 'submit' | 'button'
   formId?: string
-  confirmColor?: 'primary' | 'error'
+  confirmColor?: ThemeColor
+  cancelColor?: ThemeColor
   disableCancel?: boolean
   transition?: boolean
 }
@@ -44,7 +46,8 @@ export const CustomDialog = ({
   formId,
   confirmColor = 'primary',
   disableCancel = false,
-  transition = false
+  transition = false,
+  cancelColor = 'secondary'
 }: CustomDialogProps) => {
   return (
     <Dialog
@@ -69,8 +72,10 @@ export const CustomDialog = ({
       <DialogActions className='dialog-actions-dense'>
         <Button
           onClick={onClose}
-          color={confirmColor === 'error' ? 'primary' : 'error'}
+          color={cancelColor}
+          variant='outlined'
           disabled={disableCancel || isLoading}
+          sx={{ minWidth: 100 }}
         >
           {cancelText}
         </Button>
@@ -82,6 +87,7 @@ export const CustomDialog = ({
           type={confirmButtonType}
           onClick={confirmButtonType === 'button' ? onConfirm : undefined}
           form={formId}
+          sx={{ minWidth: 100 }}
         >
           {confirmText}
         </LoadingButton>

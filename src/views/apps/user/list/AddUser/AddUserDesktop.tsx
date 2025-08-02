@@ -28,13 +28,13 @@ const AddUserDesktop = () => {
 
   useEffect(() => {
     if (addUserStatus === 'success') {
-      setOpen(false)
+      handleClose()
       formRef.current?.resetForm()
     }
   }, [addUserStatus])
 
   useEffect(() => {
-    if (!isMd && open) setOpen(false)
+    if (!isMd && open) handleClose()
   }, [isMd, open])
 
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />
@@ -50,7 +50,7 @@ const AddUserDesktop = () => {
         title='ثبت کاربر جدید'
         formContent={formContent}
         onClose={handleClose}
-        confirmText='تأیید'
+        confirmText='تایید'
         isLoading={isAddUserLoading}
         confirmButtonType='submit'
         formId='add-user-form'

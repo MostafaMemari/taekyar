@@ -1,6 +1,7 @@
 import { Button, Divider, Drawer, IconButton, Typography } from '@mui/material'
 
 import LoadingButton from '../base/LoadingButton'
+import type { ThemeColor } from '@/@core/types'
 
 interface ConfirmDrawerProps {
   open: boolean
@@ -14,7 +15,8 @@ interface ConfirmDrawerProps {
   onConfirm?: () => void
   confirmButtonType?: 'submit' | 'button'
   formId?: string
-  confirmColor?: 'primary' | 'error'
+  confirmColor?: ThemeColor
+  cancelColor?: ThemeColor
 }
 
 const ConfirmDrawer = ({
@@ -29,7 +31,8 @@ const ConfirmDrawer = ({
   onConfirm,
   confirmButtonType = 'button',
   formId,
-  confirmColor = 'primary'
+  confirmColor = 'primary',
+  cancelColor = 'secondary'
 }: ConfirmDrawerProps) => {
   return (
     <Drawer open={open} anchor='bottom' variant='temporary' onClose={onClose} ModalProps={{ keepMounted: true }}>
@@ -49,7 +52,7 @@ const ConfirmDrawer = ({
       <div className='grid grid-cols-2 gap-4 p-6'>
         <Button
           onClick={onClose}
-          color={confirmColor === 'error' ? 'primary' : 'error'}
+          color={cancelColor}
           variant='outlined'
           className='flex items-center justify-center gap-2'
         >
