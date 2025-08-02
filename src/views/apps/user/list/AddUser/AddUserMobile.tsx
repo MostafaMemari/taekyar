@@ -5,6 +5,8 @@ import { useRef, useEffect, useState } from 'react'
 
 import Button from '@mui/material/Button'
 
+import { useMediaQuery } from '@mui/material'
+
 import AddUserForm from './AddUserForm'
 import ConfirmDrawer from '@/components/drawer/ConfirmDrawer'
 import { useUserMutations } from '@/hooks/apps/user/useUser'
@@ -15,6 +17,8 @@ const AddUserMobile = () => {
   const { addUser, addUserStatus } = useUserMutations()
   const formRef = useRef<{ resetForm: () => void }>(null)
   const isAddUserLoading = addUserStatus === 'pending'
+
+  const isMobile = useMediaQuery('(max-width:900px)')
 
   const handleClose = () => setOpen(false)
   const handleOpen = () => setOpen(true)
@@ -29,6 +33,10 @@ const AddUserMobile = () => {
       formRef.current?.resetForm()
     }
   }, [addUserStatus])
+
+  useEffect(() => {
+    if (!isMobile && open) handleClose()
+  }, [isMobile, open])
 
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />
 
