@@ -1,9 +1,9 @@
 // MUI Imports
 import Grid from '@mui/material/Grid2'
 
-// Component Imports
 import UserListTable from './UserListTable'
 import UserListCards from './UserListCards'
+import UserCardItems from './UserCardItems'
 
 const UserList = () => {
   return (
@@ -11,8 +11,14 @@ const UserList = () => {
       <Grid size={{ xs: 12 }}>
         <UserListCards />
       </Grid>
+
       <Grid size={{ xs: 12 }}>
-        <UserListTable />
+        <div className='hidden md:block'>
+          <UserListTable />
+        </div>
+        <div className='md:hidden'>
+          <UserCardItems />
+        </div>
       </Grid>
     </Grid>
   )

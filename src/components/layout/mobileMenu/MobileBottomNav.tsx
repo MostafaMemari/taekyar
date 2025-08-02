@@ -34,6 +34,7 @@ const MobileBottomNav = () => {
         PaperProps={{
           sx: {
             height: '100vh',
+            zIndex: 1,
             p: 3,
             paddingBottom: '50px'
           }

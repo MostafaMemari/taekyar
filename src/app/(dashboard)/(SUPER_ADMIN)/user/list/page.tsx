@@ -1,4 +1,4 @@
-import UserList from '@views/apps/user/list'
+import UserList from '@/views/apps/user/list/index'
 
 const UserListApp = async () => {
   return <UserList />

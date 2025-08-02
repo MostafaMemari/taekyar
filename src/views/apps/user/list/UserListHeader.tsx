@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import CustomTextField from '@core/components/mui/TextField'
 import DebouncedInput from '@/components/inputs/DebouncedInput'
-import AddUser from './AddUser'
+import AddUserDesktop from './addUser/AddUserDesktop'
 
 type Props = {
   searchInput: string
@@ -21,7 +21,7 @@ const UserListHeader = ({ searchInput, onSearch, pageSize, onPageSizeChange }: P
       <CardHeader title='لیست کاربران' />
       <div className='flex justify-between flex-col items-start md:flex-row md:items-center p-6 border-bs gap-4'>
         <div className='flex flex-col sm:flex-row max-sm:is-full items-start sm:items-center gap-4'>
-          <AddUser />
+          <AddUserDesktop />
 
           <DebouncedInput
             value={searchInput ?? ''}
