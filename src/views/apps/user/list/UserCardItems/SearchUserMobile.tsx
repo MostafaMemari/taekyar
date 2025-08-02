@@ -11,7 +11,7 @@ import useResponsive from '@/@menu/hooks/useResponsive'
 import DebouncedInput from '@/components/inputs/DebouncedInput'
 
 const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) => {
-  const isMd = useResponsive()
+  const { isMd } = useResponsive()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
@@ -20,12 +20,12 @@ const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) =
   const handleClose = () => setOpen(false)
 
   useEffect(() => {
-    if (!isMd && open) handleClose()
+    if (isMd && open) handleClose()
   }, [isMd, open])
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 300)
+      setTimeout(() => inputRef.current?.focus(), 100)
     }
   }, [open])
 
@@ -53,7 +53,7 @@ const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) =
         open={open}
         onClose={handleClose}
         PaperProps={{
-          sx: { borderRadius: '0 0 16px 16px', px: 2, pt: 4, pb: 3 }
+          sx: { padding: 8 }
         }}
       >
         <Box>
@@ -62,8 +62,10 @@ const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) =
             onChange={handleChange}
             placeholder='جستجوی کاربر'
             className='max-md:is-full'
+            inputRef={inputRef}
             slotProps={{
               input: {
+                sx: { padding: '8px 12px' },
                 startAdornment: (
                   <InputAdornment position='start'>
                     <i className='tabler-search text-xl' />

@@ -12,7 +12,7 @@ import useResponsive from '@/@menu/hooks/useResponsive'
 import AddUserForm from '../AddUserForm'
 
 const AddUserMobile = () => {
-  const isMd = useResponsive()
+  const { isMd } = useResponsive()
 
   const [open, setOpen] = useState(false)
   const { addUser, addUserStatus } = useUserMutations()
@@ -34,7 +34,7 @@ const AddUserMobile = () => {
   }, [addUserStatus])
 
   useEffect(() => {
-    if (!isMd && open) handleClose()
+    if (isMd && open) handleClose()
   }, [isMd, open])
 
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />
