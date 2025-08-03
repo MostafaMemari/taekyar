@@ -3,7 +3,7 @@
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import type { UserType } from '@/types/apps/user.types'
-import UserCard from './UserCard'
+import UserCard from './UserCardItems/UserCard'
 
 interface InfiniteUserListProps {
   allUserData: UserType[]

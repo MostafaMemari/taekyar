@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Card, CardContent, Typography, Divider, CardHeader } from '@mui/material'
 
@@ -9,6 +9,7 @@ import { getInitials } from '@/utils/getInitials'
 import CustomAvatar from '@/@core/components/mui/Avatar'
 import ConfirmDrawer from '@/components/drawer/ConfirmDrawer'
 import { useUserMutations } from '@/hooks/apps/user/useUser'
+import useResponsive from '@/@menu/hooks/useResponsive'
 
 interface UserCardProps {
   user: UserTypeWithAction
@@ -16,11 +17,19 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const { isMd } = useResponsive()
 
   const { deleteUserById, deleteUserByIdStatus } = useUserMutations()
 
+  const isDeleting = deleteUserByIdStatus === 'pending'
+  const handleDeleteUserById = async () => deleteUserById(user.id)
+
   const handleDrawerClose = () => setDrawerOpen(false)
   const handleDrawerOpen = () => setDrawerOpen(true)
+
+  useEffect(() => {
+    if (isMd && drawerOpen) handleDrawerClose()
+  }, [isMd, drawerOpen])
 
   return (
     <>
@@ -100,8 +109,8 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
         onClose={handleDrawerClose}
         title='حذف کاربر'
         description='آیا از حذف کاربر اطمینان دارید؟'
-        onConfirm={() => deleteUserById(user.id)}
-        isLoading={deleteUserByIdStatus === 'pending'}
+        onConfirm={handleDeleteUserById}
+        isLoading={isDeleting}
         confirmText='حذف'
       />
     </>
