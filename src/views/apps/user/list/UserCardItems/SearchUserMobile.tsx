@@ -10,29 +10,30 @@ import InputAdornment from '@mui/material/InputAdornment'
 import useResponsive from '@/@menu/hooks/useResponsive'
 import DebouncedInput from '@/components/inputs/DebouncedInput'
 
-const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) => {
+interface SearchUserMobileProps {
+  onSearch: (query: string) => void
+  searchInput: string
+}
+
+const SearchUserMobile = ({ onSearch, searchInput }: SearchUserMobileProps) => {
   const { isMd } = useResponsive()
   const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
   useEffect(() => {
-    if (isMd && open) handleClose()
+    if (!isMd && open) handleClose()
   }, [isMd, open])
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
+    if (open) setTimeout(() => inputRef.current?.focus(), 100)
   }, [open])
 
   const handleChange = (value: string | number) => {
     const stringValue = value.toString()
 
-    setSearch(stringValue)
     onSearch(stringValue)
   }
 
@@ -58,7 +59,7 @@ const SearchUserMobile = ({ onSearch }: { onSearch: (query: string) => void }) =
       >
         <Box>
           <DebouncedInput
-            value={search}
+            value={searchInput || ''}
             onChange={handleChange}
             placeholder='جستجوی کاربر'
             className='max-md:is-full'

@@ -34,7 +34,7 @@ const AddUserDesktop = () => {
   }, [addUserStatus])
 
   useEffect(() => {
-    if (!isMd && open) handleClose()
+    if (isMd && open) handleClose()
   }, [isMd, open])
 
   const formContent = <AddUserForm ref={formRef} onSubmit={handleFormSubmit} classNamesForm='flex flex-col gap-6' />

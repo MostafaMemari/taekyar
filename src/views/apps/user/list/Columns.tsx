@@ -22,7 +22,7 @@ import { getInitials } from '@/utils/getInitials'
 // Types
 import type { UserTypeWithAction } from '@/types/apps/user.types'
 import { userRoleLabels, userRoleObj } from '@/types/apps/user.types'
-import RemoveUserDialog from './removeUser/RemoveUserDesktop'
+import RemoveUserDialog from './UserListTable/RemoveUserDesktop'
 
 const Icon = styled('i')({})
 

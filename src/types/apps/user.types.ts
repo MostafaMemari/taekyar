@@ -1,4 +1,6 @@
+import type { GetDataResponse } from '../api-response.type'
 import type { PaginationQuery, SortDirection, DateSort } from '../common.type'
+import type { CustomQueryOptions } from '../react-query'
 
 export interface UserState {
   id: number
@@ -66,3 +68,5 @@ export const userRoleLabels: Record<UserRole, string> = {
   [UserRole.COACH]: 'مربی',
   [UserRole.STUDENT]: 'هنرجو'
 }
+
+export type UseAllUsersProps = CustomQueryOptions<GetDataResponse<UserType[]>>

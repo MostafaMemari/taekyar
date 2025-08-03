@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid2'
 import UserListTable from './UserListTable'
 import UserListCards from './UserListCards'
 import UserCardItems from './UserCardItems'
+import { UserProvider } from '@/contexts/UserListContext'
 
 const UserList = () => {
   return (
@@ -13,12 +14,14 @@ const UserList = () => {
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <div className='hidden md:block'>
-          <UserListTable />
-        </div>
-        <div className='md:hidden'>
-          <UserCardItems />
-        </div>
+        <UserProvider>
+          <div className='hidden md:block'>
+            <UserListTable />
+          </div>
+          <div className='md:hidden'>
+            <UserCardItems />
+          </div>
+        </UserProvider>
       </Grid>
     </Grid>
   )

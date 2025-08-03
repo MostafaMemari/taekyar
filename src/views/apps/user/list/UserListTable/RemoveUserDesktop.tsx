@@ -31,7 +31,7 @@ function RemoveUserDesktop({ userId }: RemoveUserDesktopProps) {
   }, [deleteUserByIdStatus])
 
   useEffect(() => {
-    if (!isMd && open) handleClose()
+    if (isMd && open) handleClose()
   }, [isMd, open])
 
   return (

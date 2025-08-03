@@ -1,69 +1,62 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 import { Box, Typography } from '@mui/material'
 
-import type { GetUsersQueryParams, UserType } from '@/types/apps/user.types'
-import { useAllUsers } from '@/hooks/apps/user/useUser'
 import InfiniteUserList from '../InfiniteUserList'
-import { usePaginationParams } from '@/hooks/usePaginationParams'
-import { DEFAULT_PAGE, defaultPagination } from '@/libs/constants/tableConfig'
+import { DEFAULT_PAGE } from '@/libs/constants/tableConfig'
 
 import { UserMobileCardSkeleton } from '../UserListSkeleton'
 import AddUserMobile from './AddUserMobile'
 import SearchUserMobile from './SearchUserMobile'
 
-const UserCardItems = () => {
-  const { page, size, setPage } = usePaginationParams()
+import { useUserContext } from '@/contexts/UserListContext'
+import type { UserType } from '@/types/apps/user.types'
+import useResponsive from '@/@menu/hooks/useResponsive'
 
-  const [queryParams, setQueryParams] = useState<GetUsersQueryParams>({ page, take: size })
+const UserCardItems = () => {
+  const { userData, pager, isLoading, queryParams, search, page, handleSearch, handlePageChange } = useUserContext()
+
   const [allUserData, setAllUserData] = useState<UserType[]>([])
   const [hasMore, setHasMore] = useState(true)
-
-  const { data: getAllUsers, isLoading: isLoadingUsers } = useAllUsers(queryParams)
-
-  const userData = useMemo(() => getAllUsers?.data.items || [], [getAllUsers?.data.items])
-  const pager = useMemo(() => getAllUsers?.data.pager || defaultPagination, [getAllUsers?.data.pager])
 
   useEffect(() => {
     if (userData.length > 0) {
       if (queryParams.page === DEFAULT_PAGE) setAllUserData(userData)
       else setAllUserData(prev => [...prev, ...userData])
-
       setHasMore(pager.currentPage < pager.totalPages)
     }
   }, [userData, queryParams.page, pager.currentPage, pager.totalPages])
 
   const loadMore = useCallback(() => {
-    if (!hasMore || isLoadingUsers) return
-    const nextPage = (queryParams.page || DEFAULT_PAGE) + 1
+    if (!hasMore || isLoading) return
+    handlePageChange(null, (queryParams.page || DEFAULT_PAGE) + 1)
+  }, [hasMore, isLoading, handlePageChange, queryParams.page])
 
-    setPage(nextPage)
-    setQueryParams(prev => ({ ...prev, page: nextPage }))
-  }, [hasMore, isLoadingUsers, setPage, queryParams.page])
+  const { isMd } = useResponsive()
 
   return (
     <>
       <div className='fixed bottom-14 left-1/2 -translate-x-1/2 z-50 px-4 py-3 w-full'>
         <div className='flex justify-between items-center gap-4'>
           <AddUserMobile />
-          <SearchUserMobile
-            onSearch={query => {
-              console.log('در حال جستجو:', query)
-            }}
-          />
+          <SearchUserMobile onSearch={handleSearch} searchInput={search || ''} />
         </div>
       </div>
 
-      {isLoadingUsers ? (
+      {isLoading && page === 1 ? (
         <UserMobileCardSkeleton />
       ) : (
         <>
-          <Box display='flex' justifyContent='center' width='100%' my={2}>
-            <Typography color='text.disabled'>{`${pager.totalCount} کاربر`}</Typography>
-          </Box>
-          <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+          {isMd && (
+            <>
+              <Box display='flex' justifyContent='center' width='100%' my={2}>
+                <Typography color='text.disabled'>{`${pager.totalCount} کاربر`}</Typography>
+              </Box>
+              <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+            </>
+          )}
         </>
       )}
     </>
