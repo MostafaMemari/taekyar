@@ -3,31 +3,45 @@
 import { useEffect, useState, useCallback } from 'react'
 
 import { Box, Typography } from '@mui/material'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
-import InfiniteUserList from '../InfiniteUserList'
 import { DEFAULT_PAGE } from '@/libs/constants/tableConfig'
-
+import type { UserType } from '@/types/apps/user.types'
 import { UserMobileCardSkeleton } from '../UserListSkeleton'
 import AddUserMobile from './AddUserMobile'
 import SearchUserMobile from './SearchUserMobile'
 
 import { useUserContext } from '@/contexts/UserListContext'
-import type { UserType } from '@/types/apps/user.types'
+
 import useResponsive from '@/@menu/hooks/useResponsive'
+import UserCard from './UserCard'
 
 const UserCardItems = () => {
-  const { userData, pager, isLoading, queryParams, search, page, handleSearch, handlePageChange } = useUserContext()
+  const { userData, pager, isLoading, queryParams, search, page, setPage, handleSearch, handlePageChange } =
+    useUserContext()
 
   const [allUserData, setAllUserData] = useState<UserType[]>([])
   const [hasMore, setHasMore] = useState(true)
 
   useEffect(() => {
+    if (page > 1) setPage(1)
+  }, [])
+
+  useEffect(() => {
     if (userData.length > 0) {
-      if (queryParams.page === DEFAULT_PAGE) setAllUserData(userData)
-      else setAllUserData(prev => [...prev, ...userData])
+      if (queryParams.page === DEFAULT_PAGE) {
+        setAllUserData(userData)
+      } else {
+        setAllUserData(prev => [...prev.filter(u => !userData.find(nu => nu.id === u.id)), ...userData])
+      }
+
       setHasMore(pager.currentPage < pager.totalPages)
     }
   }, [userData, queryParams.page, pager.currentPage, pager.totalPages])
+
+  const handleUserDeleted = (deletedUserId: number) => {
+    setAllUserData(prev => prev.filter(user => user.id !== deletedUserId))
+  }
 
   const loadMore = useCallback(() => {
     if (!hasMore || isLoading) return
@@ -45,7 +59,7 @@ const UserCardItems = () => {
         </div>
       </div>
 
-      {isLoading && page === 1 ? (
+      {isLoading && page == 1 ? (
         <UserMobileCardSkeleton />
       ) : (
         <>
@@ -54,7 +68,21 @@ const UserCardItems = () => {
               <Box display='flex' justifyContent='center' width='100%' my={2}>
                 <Typography color='text.disabled'>{`${pager.totalCount} کاربر`}</Typography>
               </Box>
-              <InfiniteUserList allUserData={allUserData} hasMore={hasMore} loadMore={loadMore} />
+              <div className='grid grid-cols-1 gap-4'>
+                <InfiniteScroll
+                  dataLength={allUserData.length}
+                  next={loadMore}
+                  hasMore={hasMore}
+                  loader={<div className='flex justify-center py-4'>در حال بارگذاری...</div>}
+                  endMessage={<div className='flex justify-center py-4'>داده بیشتری وجود ندارد</div>}
+                >
+                  <div className='flex flex-col gap-4'>
+                    {allUserData.map(user => (
+                      <UserCard key={user.id} user={user} onUserDeleted={handleUserDeleted} />
+                    ))}
+                  </div>
+                </InfiniteScroll>
+              </div>
             </>
           )}
         </>

@@ -3,10 +3,10 @@
 import Card from '@mui/material/Card'
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table'
 
-import UserListHeader from '../UserListHeader'
+import UserListHeader from './UserListHeader'
 import TablePaginationComponent from '@/components/TablePaginationComponent'
-import { columns } from '../Columns'
-import UserListBody from '../UserListBody'
+import { columns } from './Columns'
+import UserListBody from './UserListBody'
 
 import { DEFAULT_TAKE } from '@/libs/constants/tableConfig'
 import { UserListSkeleton } from '../UserListSkeleton'

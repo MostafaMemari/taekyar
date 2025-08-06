@@ -81,9 +81,9 @@ export const CustomDialog = ({
         </Button>
 
         <LoadingButton
+          isLoading={isLoading}
           variant='contained'
           color={confirmColor}
-          isLoading={isLoading}
           type={confirmButtonType}
           onClick={confirmButtonType === 'button' ? onConfirm : undefined}
           form={formId}

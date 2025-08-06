@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import CustomTextField from '@core/components/mui/TextField'
 import DebouncedInput from '@/components/inputs/DebouncedInput'
-import AddUserDesktop from './UserListTable/AddUserDesktop'
+import AddUserDesktop from './AddUserDesktop'
 
 type Props = {
   searchInput: string

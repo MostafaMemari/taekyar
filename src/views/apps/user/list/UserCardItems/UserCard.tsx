@@ -13,22 +13,35 @@ import useResponsive from '@/@menu/hooks/useResponsive'
 
 interface UserCardProps {
   user: UserTypeWithAction
+  onUserDeleted?: (deletedUserId: number) => void
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
+const UserCard: React.FC<UserCardProps> = ({ user, onUserDeleted }) => {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { isMd } = useResponsive()
 
   const { deleteUserById, deleteUserByIdStatus } = useUserMutations()
 
   const isDeleting = deleteUserByIdStatus === 'pending'
-  const handleDeleteUserById = async () => deleteUserById(user.id)
+
+  const handleDeleteUserById = async () =>
+    deleteUserById(user.id, {
+      onSuccess: () => {
+        if (onUserDeleted) onUserDeleted(user.id)
+      }
+    })
 
   const handleDrawerClose = () => setDrawerOpen(false)
   const handleDrawerOpen = () => setDrawerOpen(true)
 
   useEffect(() => {
-    if (isMd && drawerOpen) handleDrawerClose()
+    if (deleteUserByIdStatus === 'success' || deleteUserByIdStatus === 'error') {
+      handleDrawerClose()
+    }
+  }, [deleteUserByIdStatus])
+
+  useEffect(() => {
+    if (!isMd && drawerOpen) handleDrawerClose()
   }, [isMd, drawerOpen])
 
   return (
@@ -57,6 +70,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                   icon: 'tabler-edit',
                   menuItemProps: {
                     className: 'flex items-center gap-2 text-textSecondary',
+
                     onClick: handleDrawerOpen
                   }
                 },
